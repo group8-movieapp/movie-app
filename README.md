@@ -1,4 +1,4 @@
-# Docker Full-Stack Example
+# Docker Full-Stack Example //
 
 This project is a beginner-friendly example of running a full-stack application with **Docker Compose**.
 
