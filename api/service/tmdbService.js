@@ -29,4 +29,16 @@ const searchMoviesFromTMDB = async (query, year, genre) => {
     return data.results
 }
 
-export { searchMoviesFromTMDB }
+const nowPlayingMoviesFromTMDB = async () => { 
+    const data = await fetchFromTMDB('/movie/now_playing', { region: 'FI' })
+    return data.results
+}
+
+// Tämä koodi toimii TMDB:n kanssa kommunikoinnin apuna. 
+// `fetchFromTMDB hoitaa yhteisen API-kutsun ja lisää automaattisesti suomen kielen sekä TMDB-tokenin. 
+// Sen päälle on tehty omat funktiot elokuvien hakuun (`searchMoviesFromTMDB`) ja Suomessa tällä hetkellä teattereissa olevien elokuvien hakuun (`nowPlayingMoviesFromTMDB`). 
+// Lopuksi nämä funktiot viedään `export`-komennolla muiden tiedostojen käytettäväksi.
+// Service tekee fetch pyynnön ja palauttaa datan controllerille.
+
+
+export { searchMoviesFromTMDB, nowPlayingMoviesFromTMDB }

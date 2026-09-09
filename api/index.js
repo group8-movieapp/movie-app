@@ -3,8 +3,7 @@ import express from 'express'
 import cors from 'cors'
 import errorHandler from './middleware/errorHandler.js'
 import testRouter from './routes/testRouter.js'
-import movieRouter from './routes/movieRouter.js' // Importataan movieRouter, jotta voimme liittää sen polkuun /api/movies
-
+import movieRouter from './routes/movieRouter.js' //Muutettu MVC-malliin sopivaksi, jotta reitit ja controllerit ovat erillään.
 const port = process.env.PORT || 3000
 
 const app = express()
@@ -12,7 +11,7 @@ app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
-app.use('/api/movies', movieRouter) // Liitetään movieRouter polkuun /api/movies. Eli tämä liittyy movieRouteriin.
+app.use('/api/movies', movieRouter) 
 app.use('/', testRouter)
 
 // Health check endpoint for database connectivity
