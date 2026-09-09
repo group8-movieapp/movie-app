@@ -1,4 +1,5 @@
 import express from 'express'
+import { searchMovies } from '../controllers/movieController.js'
 
 // Ekaksi luodaan Express Router.
 // eli routeriin voidaan määritellä elokuviin liittyvät reitit.
@@ -8,6 +9,7 @@ const router = express.Router()
 // Kun movieRouter on index.js:ssä liitetty polkuun /api/movies,
 // tämän lopullinen osoite on:
 // GET /api/movies/now-playing
+router.get('/search', searchMovies)
 router.get('/now-playing', async (req, res, next) => {
 
   // virheen käsittelyy

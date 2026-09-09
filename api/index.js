@@ -8,11 +8,11 @@ import movieRouter from './routes/movieRouter.js' // Importataan movieRouter, jo
 const port = process.env.PORT || 3000
 
 const app = express()
-app.use('/api/movies', movieRouter) // Liitetään movieRouter polkuun /api/movies. Eli tämä liittyy movieRouteriin.
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
+app.use('/api/movies', movieRouter) // Liitetään movieRouter polkuun /api/movies. Eli tämä liittyy movieRouteriin.
 app.use('/', testRouter)
 
 // Health check endpoint for database connectivity
