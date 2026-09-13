@@ -2,12 +2,13 @@
 
 
 
-#root {
-  max-width: 1280px;
+ #root {
+  max-width: 100%;
+  width: 100%;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 2rem, 0;
   text-align: center;
-}
+ }
 
 .search-form {
   display: flex;

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import axios from 'axios'
 import './App.css'
+import NowPlayingMovies from './components/NowPlayingMovies'
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -76,7 +77,8 @@ function App() {
           </div>
         ))}
       </div>
-    </div>
+      <NowPlayingMovies />
+    </div> 
   )
 }
 
