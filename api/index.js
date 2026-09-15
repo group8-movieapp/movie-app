@@ -4,6 +4,9 @@ import cors from 'cors'
 import errorHandler from './middleware/errorHandler.js'
 import testRouter from './routes/testRouter.js'
 import movieRouter from './routes/movieRouter.js' //Muutettu MVC-malliin sopivaksi, jotta reitit ja controllerit ovat erillään.
+import userRouter from './routes/userRouter.js' // Importataan userRouter
+
+
 const port = process.env.PORT || 3000
 
 const app = express()
@@ -13,6 +16,9 @@ app.use(express.urlencoded({ extended: false }))
 
 app.use('/api/movies', movieRouter) 
 app.use('/', testRouter)
+
+// Käytetään userRouteria /api/users-polussa
+app.use('/api/users', userRouter)
 
 // Health check endpoint for database connectivity
 app.get('/api/health', async (req, res) => {
