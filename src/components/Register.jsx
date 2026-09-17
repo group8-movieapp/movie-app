@@ -61,13 +61,14 @@ const Register = () => {
       setPassword('')
 
     } catch (error) {
-
-      // Näytetään backendiltä tullut virheilmoitus
-      // Jos virheilmoitusta ei saada, näytetään oletusviesti
-      setError(
-        error.response?.data?.error ||
+      // Tarkistetaan turvallisesti eri vaihtoehdot virheviestille
+      const errorMessage = 
+        error.response?.data?.error?.message || 
+        error.response?.data?.error || 
+        error.response?.data?.message || 
         'Rekisteröityminen epäonnistui.'
-      )
+
+      setError(errorMessage)
     }
   }
 
