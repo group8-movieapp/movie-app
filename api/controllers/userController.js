@@ -1,5 +1,6 @@
-import { hash } from 'bcrypt' //kirjastetaan bcrypt-kirjasto, jota käytetään salasanan hashaukseen
-import { createUser } from '../models/userModel.js' // Importataan createUser-funktio userModelista
+import { compare, hash } from 'bcrypt' //kirjastetaan bcrypt-kirjasto, jota käytetään salasanan hashaukseen
+import jwt from 'jsonwebtoken'
+import { createUser, findUserByEmail } from '../models/userModel.js' // Importataan createUser-funktio userModelista
 
 //Hoitaa käyttäjän rekisteröitymisen. 
 //Eli Controller ottaa frontendiltä tulevat käyttäjätiedot, tarkistaa ne ja käsittelee ne ennen kuin ne lähetetään tietokantaan.
@@ -67,7 +68,55 @@ const registerUser = async (req, res, next) => { // Luodaan registerUser-funktio
   }
 }
 
-export { registerUser } // Viedään registerUser-funktio, jotta sitä voidaan käyttää muissa tiedostoissa
+const loginUser = async (req, res, next) => {
+  try {
+    const {email, password} = req.body
+
+    if(!email || !password){
+      const error = new Error('Email and password are required')
+      error.status = 400
+      return next(error)
+    }
+
+    const normalizedEmail = email.trim().toLowerCase()
+
+    const user = await findUserByEmail(normalizedEmail)
+
+    if (!user) {
+      const error = new Error('Invalid email or password')
+      error.status = 401
+      return next(error)
+    }
+
+    const isPasswordValid = await compare(password, user.password)
+
+    if (!isPasswordValid) {
+      const error = new Error('Invalid email or password')
+      error.status = 401
+      return next(error)
+    }
+
+    const token = jwt.sign(
+      {id: user.id, email: user.email, username: user.username},
+      process.env.JWT_SECRET,
+      {expiresIn: '24h'}
+    )
+
+    res.status(200).json({
+      token,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email
+      }
+    })
+
+  } catch (error) {
+    next(error)
+  }
+}
+
+export { registerUser, loginUser } // Viedään registerUser-funktio, jotta sitä voidaan käyttää muissa tiedostoissa
 
 
 //Toimii välikätenä HTTP-pynnön ja tietokannan välillä. Se ottaa vastaan HTTP-pyynnön, 

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import axios from 'axios'
 import './App.css'
 import NowPlayingMovies from './components/NowPlayingMovies'
@@ -9,12 +9,27 @@ const API_URL = import.meta.env.VITE_API_URL
 
 function App() {
   const [page, setPage] = useState('home') //luo page state, joka määrittää, mikä sivu näytetään (home, login, register)
-
+  const [user, setUser] = useState(null)
   const [query, setQuery] = useState('')
   const [movies, setMovies] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [searched, setSearched] = useState(false)
+
+  useEffect(() => {
+    const loggedUserJSON = localStorage.getItem('user')
+    if (loggedUserJSON) {
+      const userData = JSON.parse(loggedUserJSON)
+      setUser(userData)
+    }
+  },[])
+
+  const handleLogout = async (e) => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    setUser(null)
+    setPage('home')
+  }
 
   const handleSearch = async (e) => {
     e.preventDefault()
@@ -44,12 +59,12 @@ function App() {
   if (page === 'login') { //luo login sivu, joka sisältää Login komponentin ja kaksi nappia, joilla voi siirtyä rekisteröitymiseen tai takaisin etusivulle
     return (
       <div className="app">
-        <Login setPage={setPage} />
+        <Login setPage={setPage} setUser={setUser} />
         <button onClick={() => setPage('register')}>
-          Rekisteröidy
+          Sign up
         </button>
         <button onClick={() => setPage('home')}>
-          Takaisin etusivulle
+          Back to frontpage
         </button>
       </div>
     )
@@ -60,7 +75,7 @@ function App() {
       <div className="app">
         <Register />
         <button onClick={() => setPage('login')}>
-          Takaisin kirjautumiseen
+          Back to login
         </button>
       </div>
     )
@@ -68,9 +83,18 @@ function App() {
 
   return (
     <div className="app">
-      <button onClick={() => setPage('login')}>
-        Kirjaudu
-      </button>
+      <header className='header'>
+        {user ? (
+          <div className='user-info'>
+            <span>Logged in as {user.username}</span>
+            <button onClick={handleLogout}>Logout</button>
+          </div>
+        ) : (
+          <button onClick={() => setPage('login')}>
+            Login
+          </button>
+        )}
+      </header>
 
       <h1>Movie Search</h1>
 
