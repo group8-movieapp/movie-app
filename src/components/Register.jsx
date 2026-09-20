@@ -74,7 +74,7 @@ const Register = () => {
 
   return (
     <div>
-      <h2>Rekisteröidy</h2>
+      <h2>Sign up</h2>
 
       {/* Rekisteröitymislomake */}
       <form onSubmit={handleRegister}>
@@ -104,7 +104,7 @@ const Register = () => {
         />
 
         {/* Lomakkeen lähetyspainike */}
-        <button type="submit">Rekisteröidy</button>
+        <button type="submit">Sign up</button>
       </form>
 
       {/* Näytetään onnistumisviesti, jos message ei ole tyhjä */}
