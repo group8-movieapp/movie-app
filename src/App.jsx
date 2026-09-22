@@ -15,13 +15,45 @@ function App() {
       const userData = JSON.parse(loggedUserJSON)
       setUser(userData)
     }
-  },[])
+  }, [])
 
   const handleLogout = async (e) => {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
     setUser(null)
     setPage('home')
+  }
+
+  const handleDelete = async (e) => {
+    const ok = window.confirm('Delete account?')
+    if (!ok)
+      return
+
+    try {
+      const token = localStorage.getItem('token')
+      const response = await fetch('http://localhost:3000/api/users', {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': `application/json`
+
+        }
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Delelte account failed')
+      }
+
+      alert('Account deleted succesfully')
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+      setUser(null)
+      setPage('home')
+
+    } catch (error) {
+      alert('Error: ${error.message}')
+    }
   }
 
   if (page === 'login') { //luo login sivu, joka sisältää Login komponentin ja kaksi nappia, joilla voi siirtyä rekisteröitymiseen tai takaisin etusivulle
@@ -62,6 +94,11 @@ function App() {
             Login
           </button>
         )}
+        <div>
+          <button onClick={handleDelete}>
+            Delete account
+          </button>
+        </div>
       </header>
 
       <MovieSearch />

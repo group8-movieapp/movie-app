@@ -49,7 +49,7 @@ const Register = () => {
       })
 
       // Näytetään käyttäjälle onnistumisviesti
-      setMessage('Rekisteröityminen onnistui!')
+      setMessage('Registration succesful!')
 
       // Tyhjennetään käyttäjänimikenttä
       setUsername('')
@@ -66,7 +66,7 @@ const Register = () => {
         error.response?.data?.error?.message || 
         error.response?.data?.error || 
         error.response?.data?.message || 
-        'Rekisteröityminen epäonnistui.'
+        'Registration failed.'
 
       setError(errorMessage)
     }
@@ -82,7 +82,7 @@ const Register = () => {
         {/* Käyttäjänimikenttä */}
         <input
           type="text"
-          placeholder="Käyttäjänimi"
+          placeholder="Username"
           value={username}
           onChange={(event) => setUsername(event.target.value)}
         />
@@ -90,7 +90,7 @@ const Register = () => {
         {/* Sähköpostikenttä */}
         <input
           type="email"
-          placeholder="Sähköposti"
+          placeholder="Email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
         />
@@ -98,7 +98,7 @@ const Register = () => {
         {/* Salasanakenttä */}
         <input
           type="password"
-          placeholder="Salasana"
+          placeholder="Password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
         />

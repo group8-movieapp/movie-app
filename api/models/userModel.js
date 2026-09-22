@@ -20,4 +20,11 @@ const findUserByEmail = async (email) => {
   return result.rows[0]
 }
 
-export { createUser, findUserByEmail }
+const removeUser = async (id) => {
+  const result = await pool.query(
+    'DELETE FROM users WHERE id = $1', [id]
+  )
+  return result.rowCount
+}
+
+export { createUser, findUserByEmail, removeUser }
