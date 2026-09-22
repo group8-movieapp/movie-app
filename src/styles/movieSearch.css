@@ -2,6 +2,7 @@
   display: flex;
   justify-content: center;
   gap: 0.5rem;
+  margin-top: 8rem;
   margin-bottom: 1.5rem;
 }
 
@@ -10,11 +11,13 @@
   padding: 0.6em 0.8em;
   font-size: 1em;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
 }
 
 .error {
-  color: #d33;
+  color: #f7768e;
 }
 
 .movie-grid {
@@ -22,35 +25,4 @@
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 1rem;
   margin-top: 1rem;
-}
-
-.movie-card {
-  text-align: left;
-}
-
-.movie-card img {
-  width: 100%;
-  border-radius: 8px;
-}
-
-.movie-card .no-poster {
-  width: 100%;
-  aspect-ratio: 2 / 3;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #333;
-  border-radius: 8px;
-  color: #aaa;
-}
-
-.movie-card h3 {
-  margin: 0.4em 0 0.1em;
-  font-size: 1em;
-}
-
-.release-date {
-  color: #888;
-  font-size: 0.85em;
-  margin: 0;
 }

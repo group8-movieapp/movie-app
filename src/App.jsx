@@ -4,6 +4,7 @@ import NowPlayingMovies from './components/NowPlayingmovies'
 import Login from './components/Login' //importataan login komponentti
 import Register from './components/Register' //import './App.css' //importa App.css tiedoston
 import MovieSearch from './components/MovieSearch'
+import Header from './components/Header'
 
 function App() {
   const [page, setPage] = useState('home') //luo page state, joka määrittää, mikä sivu näytetään (home, login, register)
@@ -59,6 +60,7 @@ function App() {
   if (page === 'login') { //luo login sivu, joka sisältää Login komponentin ja kaksi nappia, joilla voi siirtyä rekisteröitymiseen tai takaisin etusivulle
     return (
       <div className="app">
+        <Header page={page} setPage={setPage} user={user} onLogout={handleLogout} />
         <Login setPage={setPage} setUser={setUser} />
         <button onClick={() => setPage('register')}>
           Sign up
@@ -73,6 +75,7 @@ function App() {
   if (page === 'register') { //luo register sivu, joka sisältää Register komponentin ja kaksi nappia, joilla voi siirtyä kirjautumiseen tai takaisin etusivulle
     return (
       <div className="app">
+        <Header page={page} setPage={setPage} user={user} onLogout={handleLogout} />
         <Register />
         <button onClick={() => setPage('login')}>
           Back to login
@@ -83,23 +86,7 @@ function App() {
 
   return (
     <div className="app">
-      <header className='header'>
-        {user ? (
-          <div className='user-info'>
-            <span>Logged in as {user.username}</span>
-            <button onClick={handleLogout}>Logout</button>
-          </div>
-        ) : (
-          <button onClick={() => setPage('login')}>
-            Login
-          </button>
-        )}
-        <div>
-          <button onClick={handleDelete}>
-            Delete account
-          </button>
-        </div>
-      </header>
+      <Header page={page} setPage={setPage} user={user} onLogout={handleLogout} onDelete={handleDelete} />
 
       <MovieSearch />
 
