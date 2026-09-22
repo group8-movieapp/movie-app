@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import axios from 'axios'
+import MovieCard from './MovieCard'
 import '../styles/movieSearch.css'
 
 const API_URL = import.meta.env.VITE_API_URL
@@ -38,7 +39,6 @@ export default function MovieSearch() {
 
   return (
     <>
-      <h1>Movie Search</h1>
 
       <form onSubmit={handleSearch} className="search-form">
         <input
@@ -60,22 +60,7 @@ export default function MovieSearch() {
 
       <div className="movie-grid">
         {movies.map((movie) => (
-          <div key={movie.id} className="movie-card">
-            {movie.poster_path ? (
-              <img
-                src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
-                alt={movie.title}
-              />
-            ) : (
-              <div className="no-poster">No poster available</div>
-            )}
-
-            <h3>{movie.title}</h3>
-
-            <p className="release-date">
-              {movie.release_date || 'Release date not available'}
-            </p>
-          </div>
+          <MovieCard key={movie.id} movie={movie} />
         ))}
       </div>
     </>

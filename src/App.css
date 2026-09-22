@@ -1,11 +1,12 @@
-/* HUOM: Tyyli on tällä hetkellä vain testausta varten, päivitetään myöhemmin oikeaksi*/
+.app {
+  min-height: 100vh;
+  width: 100%;
+  background: var(--bg);
+  color: var(--text);
+}
 
-
-
- #root {
+#root {
   max-width: 100%;
   width: 100%;
   margin: 0 auto;
-  padding: 2rem, 0;
-  text-align: center;
- }
+}
