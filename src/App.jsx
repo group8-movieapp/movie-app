@@ -62,12 +62,6 @@ function App() {
       <div className="app">
         <Header page={page} setPage={setPage} user={user} onLogout={handleLogout} />
         <Login setPage={setPage} setUser={setUser} />
-        <button onClick={() => setPage('register')}>
-          Sign up
-        </button>
-        <button onClick={() => setPage('home')}>
-          Back to frontpage
-        </button>
       </div>
     )
   }

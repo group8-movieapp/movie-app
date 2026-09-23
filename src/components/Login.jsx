@@ -1,5 +1,6 @@
 import { useState } from "react"
 import axios from 'axios'
+import '../styles/login.css'
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -25,7 +26,7 @@ const Login = ({ setPage, setUser }) => {
 
       if (setUser) {
         setUser(user)
-        
+
       }
 
       if (setPage) {
@@ -45,33 +46,37 @@ const Login = ({ setPage, setUser }) => {
 
 
   return (
-    <div>
-      <h2>Login</h2>
+    <div className="login-page">
+      <div className="login-card">
+        <h2>Login</h2>
 
-      <form onSubmit={handleLogin}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <form onSubmit={handleLogin} className="login-form">
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="login-input"
+          />
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="login-input"
+          />
 
-        <button type="submit">Login</button>
-      </form>
+          <button type="submit" className="btn btn-primary login-submit">Login</button>
+        </form>
 
-      {error && <p>{error}</p>}
+        {error && <p className="login-error">{error}</p>}
 
-      <p>Don't have a account?{''}</p>
-      <button type="button" onClick={() => setPage('register')}>
-        Sign up
-      </button>
+        <p className="login-signup-prompt">Don't have an account?</p>
+        <button type="button" className="btn btn-outline login-signup-btn" onClick={() => setPage('register')}>
+          Sign up
+        </button>
+      </div>
     </div>
   )
 }
