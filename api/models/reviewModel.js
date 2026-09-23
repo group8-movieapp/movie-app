@@ -22,6 +22,25 @@ const getReviews = async () => {
     return result.rows
 }
 
+const deleteReview = async (id, user_id) => {
+    const result = await pool.query(
+    `DELETE FROM reviews WHERE id=$1 AND user_id = $2`,
+    [id, user_id]
+    )
+    return result.rowCount
+}
+
+const getReviewsByMovieId = async(movie_id) => {
+    const result = await pool.query(
+        `SELECT reviews.id, reviews.movie_id, reviews.review_text, reviews.rating, reviews.created_at, users.username
+        FROM reviews
+        JOIN users ON reviews.user_id = users.id
+        WHERE reviews.movie_id = $1
+        ORDER BY reviews.created_at DESC`,
+        [movie_id]
+    )
+    return result.rows
+}
 
 
-export {addReview, getReviews}
+export {addReview, getReviews, deleteReview, getReviewsByMovieId}
