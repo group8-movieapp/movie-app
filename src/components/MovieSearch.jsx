@@ -5,7 +5,7 @@ import '../styles/movieSearch.css'
 
 const API_URL = import.meta.env.VITE_API_URL
 
-export default function MovieSearch() {
+  export default function MovieSearch({ onSelectMovie }) {
   const [query, setQuery] = useState('')
   const [movies, setMovies] = useState([])
   const [loading, setLoading] = useState(false)
@@ -60,9 +60,14 @@ export default function MovieSearch() {
 
       <div className="movie-grid">
         {movies.map((movie) => (
-          <MovieCard key={movie.id} movie={movie} />
+          <MovieCard 
+            key={movie.id} 
+            movie={movie} 
+            onClick={() => onSelectMovie(movie)} 
+          />
         ))}
       </div>
     </>
   )
 }
+

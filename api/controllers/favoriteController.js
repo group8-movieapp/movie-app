@@ -6,7 +6,8 @@ import {
 
 const createFavorite = async (req, res, next) => {
   try {
-    const userId = req.user.userId
+    
+    const userId = req.user.userId || req.user.id 
     const { movieId } = req.body
 
     const favorite = await addFavorite(userId, movieId)

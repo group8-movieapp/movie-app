@@ -15,6 +15,15 @@ export default function Header({ page, setPage, user, onLogout, onDelete }) {
           <button type="button" className={page === 'groups' ? 'nav-link active' : 'nav-link'} onClick={() => setPage('groups')}>
             Groups
           </button>
+          {/* Suosikit näkyy vain kirjautuneelle käyttäjälle */}
+          {user && (
+            <button type="button" className={page === 'favorites' ? 'nav-link active' : 'nav-link'} onClick={() => setPage('favorites')}>
+              ❤️ Favorites
+            </button>
+        )}
+
+
+
         </nav>
 
         <div className="site-header-actions">
@@ -45,3 +54,5 @@ export default function Header({ page, setPage, user, onLogout, onDelete }) {
     </header>
   );
 }
+
+

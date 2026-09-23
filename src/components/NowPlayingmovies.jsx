@@ -5,7 +5,7 @@ import '../styles/nowPlayingMovies.css'
 
 const API_URL = import.meta.env.VITE_API_URL
 
-export default function NowPlayingMovies() {
+export default function NowPlayingMovies({ onSelectMovie }) {
 
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -63,7 +63,11 @@ export default function NowPlayingMovies() {
         <div id="now-playing-movie-grid" ref={scrollRef}>
           {movies.map((movie) => (
             <div key={movie.id} className="now-playing-movie-card">
-              <MovieCard movie={movie} />
+              {/* LISÄTTY TÄHÄN: välitetään klikkaus MovieCardille */}
+              <MovieCard 
+                movie={movie} 
+                onClick={() => onSelectMovie(movie)} 
+              />
             </div>
           ))}
         </div>
@@ -82,3 +86,5 @@ export default function NowPlayingMovies() {
     </div>
   );
 }
+
+

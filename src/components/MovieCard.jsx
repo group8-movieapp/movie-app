@@ -52,14 +52,14 @@ const PLACEHOLDER_GRADIENTS = [
   'linear-gradient(160deg, #fb923c, #7c2d12)'
 ]
 
-export default function MovieCard({ movie }) {
+export default function MovieCard({ movie, onClick }) {
   const year = movie.release_date ? movie.release_date.slice(0, 4) : null
   const genreName = movie.genre_ids?.length ? GENRE_NAMES[movie.genre_ids[0]] : null
   const subtitle = [genreName, year].filter(Boolean).join(' · ')
   const gradient = PLACEHOLDER_GRADIENTS[movie.id % PLACEHOLDER_GRADIENTS.length]
 
   return (
-    <div className="movie-card">
+    <div className="movie-card" onClick={onClick} style={{ cursor: 'pointer' }}>
       <div className="movie-card-poster">
         {movie.poster_path ? (
           <img
@@ -105,3 +105,4 @@ export default function MovieCard({ movie }) {
     </div>
   )
 }
+
