@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS public.reviews
     user_id integer NOT NULL,
     movie_id integer NOT NULL,
     review_text text NOT NULL,
-    rating smallint NOT NULL,
+    rating smallint NOT NULL CHECK (rating >=1 AND rating <=5),
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 );
