@@ -32,16 +32,52 @@
   right: 8px;
   display: inline-flex;
   align-items: center;
-  gap: 0.25em;
+  gap: 0.35em;
   background: rgba(10, 12, 22, 0.75);
   color: #fff;
-  font-size: 0.78rem;
-  font-weight: 600;
-  padding: 0.2em 0.5em;
+  padding: 0.3em 0.45em;
   border-radius: 6px;
 }
-.movie-card-rating svg {
+
+.movie-card-stars {
+  position: relative;
+  display: inline-block;
+  /* 5 icons * 10px + 4 gaps * 1px, so the filled row's percentage width
+     clips against a fixed, known size instead of guessing at shrink-to-fit
+     sizing from whichever row happens to be in normal flow. */
+  width: 54px;
+  height: 10px;
+  line-height: 0;
+}
+
+.stars-row {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  gap: 1px;
+  white-space: nowrap;
+}
+
+.stars-row svg {
+  display: block;
+  flex: 0 0 auto;
+}
+
+.stars-row.stars-empty svg {
+  color: rgba(255, 255, 255, 0.28);
+}
+
+.stars-row.stars-filled {
+  overflow: hidden;
+}
+.stars-row.stars-filled svg {
   color: #fbbf24;
+}
+
+.movie-card-rating-value {
+  font-size: 0.75rem;
+  font-weight: 600;
 }
 
 .movie-card-title {

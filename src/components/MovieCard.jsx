@@ -1,5 +1,22 @@
 import '../styles/movieCard.css'
 
+const STAR_PATH = 'M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z'
+
+// Draws one row of 5 star outlines. Two of these are stacked (an empty
+// row behind, a gold row on top clipped to a percentage width) to show
+// fractional ratings like 3.9/5 without needing separate half-star icons.
+function StarIcons() {
+  return (
+    <>
+      {[0, 1, 2, 3, 4].map((i) => (
+        <svg key={i} width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+          <path d={STAR_PATH} />
+        </svg>
+      ))}
+    </>
+  )
+}
+
 // TMDB's standard genres (id -> short English name). Used only for the
 // card's secondary line ("Genre · Year") when a movie carries genre_ids
 // (e.g. in search results).
@@ -60,12 +77,26 @@ export default function MovieCard({ movie }) {
         )}
 
         {typeof movie.vote_average === 'number' && movie.vote_average > 0 && (
-          <span className="movie-card-rating">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z" />
-            </svg>
-            {movie.vote_average.toFixed(1)}
-          </span>
+          // TMDB rates movies 0-10; the assignment wants a 1-5 scale, so we
+          // halve it here and render it as a 5-star row instead of a raw number.
+          (() => {
+            const ratingOutOfFive = movie.vote_average / 2
+            const fillPercent = Math.max(0, Math.min(100, (movie.vote_average / 10) * 100))
+
+            return (
+              <span className="movie-card-rating">
+                <span className="movie-card-stars" title={`${ratingOutOfFive.toFixed(1)} / 5`}>
+                  <span className="stars-row stars-empty">
+                    <StarIcons />
+                  </span>
+                  <span className="stars-row stars-filled" style={{ width: `${fillPercent}%` }}>
+                    <StarIcons />
+                  </span>
+                </span>
+                <span className="movie-card-rating-value">{ratingOutOfFive.toFixed(1)}</span>
+              </span>
+            )
+          })()
         )}
       </div>
 
