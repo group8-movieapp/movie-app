@@ -9,13 +9,6 @@ export default function Header({ page, setPage, user, onLogout, onDelete }) {
         </button>
 
         <nav className="site-nav">
-          <button
-            type="button"
-            className={page === 'home' ? 'nav-link active' : 'nav-link'}
-            onClick={() => setPage('home')}
-          >
-            Frontpage
-          </button>
           <button type="button" className={page === 'profile' ? 'nav-link active' : 'nav-link'} onClick={() => setPage('profile')}>
             Profile
           </button>

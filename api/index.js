@@ -5,6 +5,7 @@ import errorHandler from './middleware/errorHandler.js'
 import movieRouter from './routes/movieRouter.js' //Muutettu MVC-malliin sopivaksi, jotta reitit ja controllerit ovat erillään.
 import userRouter from './routes/userRouter.js' // Importataan userRouter
 import reviewRouter from './routes/reviewRouter.js'
+import favoriteRouter from './routes/favoriteRouter.js' // Importataan favoriteRouter
 
 
 const port = process.env.PORT || 3000
@@ -18,6 +19,7 @@ app.use('/api/movies', movieRouter)
 
 // Käytetään userRouteria /api/users-polussa
 app.use('/api/users', userRouter)
+app.use('/api/favorites', favoriteRouter) // Käytetään favoriteRouteria /api/favorites-polussa
 
 app.use('/api/reviews', reviewRouter)
 
