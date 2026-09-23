@@ -1,22 +1,14 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
 import './App.css'
-import NowPlayingMovies from './components/NowPlayingMovies'
-import Login from './components/Login'
-import Register from './components/Register'
-import FavoritesList from './components/FavoritesList'
-
-const API_URL = import.meta.env.VITE_API_URL
+import NowPlayingMovies from './components/NowPlayingmovies'
+import Login from './components/Login' //importataan login komponentti
+import Register from './components/Register' //import './App.css' //importa App.css tiedoston
+import MovieSearch from './components/MovieSearch'
+import Header from './components/Header'
 
 function App() {
   const [page, setPage] = useState('home')
   const [user, setUser] = useState(null)
-  const [query, setQuery] = useState('')
-  const [movies, setMovies] = useState([])
-  const [favorites, setFavorites] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [searched, setSearched] = useState(false)
 
   // Tarkistetaan kirjautuminen käynnistyksessä
   useEffect(() => {
@@ -51,26 +43,35 @@ function App() {
     setPage('home')
   }
 
-  // Elokuvien haku TMDB:stä
-  const handleSearch = async (e) => {
-    e.preventDefault()
-    if (!query.trim()) return
-
-    setLoading(true)
-    setError(null)
-    setSearched(true)
+  const handleDelete = async (e) => {
+    const ok = window.confirm('Delete account?')
+    if (!ok)
+      return
 
     try {
-      const response = await axios.get(`${API_URL}/api/movies/search`, {
-        params: { query }
+      const token = localStorage.getItem('token')
+      const response = await fetch('http://localhost:3000/api/users', {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': `application/json`
+
+        }
       })
-      setMovies(response.data)
-    } catch (err) {
-      console.error(err)
-      setError('Failed to search for movies.')
-      setMovies([])
-    } finally {
-      setLoading(false)
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Delelte account failed')
+      }
+
+      alert('Account deleted succesfully')
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+      setUser(null)
+      setPage('home')
+
+    } catch (error) {
+      alert('Error: ${error.message}')
     }
   }
 
@@ -123,12 +124,8 @@ function App() {
   if (page === 'login') {
     return (
       <div className="app">
-        <Login setPage={(newPage) => {
-          setPage(newPage)
-          if (newPage === 'home') fetchFavorites()
-        }} setUser={setUser} />
-        <button onClick={() => setPage('register')}>Sign up</button>
-        <button onClick={() => setPage('home')}>Back to frontpage</button>
+        <Header page={page} setPage={setPage} user={user} onLogout={handleLogout} />
+        <Login setPage={setPage} setUser={setUser} />
       </div>
     )
   }
@@ -137,6 +134,7 @@ function App() {
   if (page === 'register') {
     return (
       <div className="app">
+        <Header page={page} setPage={setPage} user={user} onLogout={handleLogout} />
         <Register />
         <button onClick={() => setPage('login')}>Back to login</button>
       </div>
@@ -146,96 +144,9 @@ function App() {
   // Päänäkymä (Home)
   return (
     <div className="app">
-      <header className='header' style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 20px' }}>
-        
-        {/* Aina näkyvä Favouritelist-painike */}
-        <button 
-          onClick={() => {
-            if (!user) {
-              setPage('login')
-            } else {
-              const favSection = document.getElementById('favorites-section')
-              if (favSection) {
-                favSection.scrollIntoView({ behavior: 'smooth' })
-              }
-            }
-          }}
-          style={{ fontWeight: 'bold' }}
-        >
-          ⭐ Favouritelist {user && `(${favorites.length})`}
-        </button>
+      <Header page={page} setPage={setPage} user={user} onLogout={handleLogout} onDelete={handleDelete} />
 
-        {/* Kirjautumistila / Logout-nappi */}
-        {user ? (
-          <div className='user-info' style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-            <span>Logged in as {user.username}</span>
-            <button onClick={handleLogout}>Logout</button>
-          </div>
-        ) : (
-          <button onClick={() => setPage('login')}>Login</button>
-        )}
-      </header>
-
-      <h1>Movie Search</h1>
-
-      {/* Suosikkilista omassa ID:llä rullausta varten (näkyy vain kirjautuneille) */}
-      {user && (
-        <div id="favorites-section">
-          <FavoritesList 
-            favorites={favorites} 
-            onDeleteFavorite={handleDeleteFavorite} 
-          />
-        </div>
-      )}
-
-      {/* Hakulomake */}
-      <form onSubmit={handleSearch} className="search-form">
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search for a movie..."
-        />
-        <button type="submit" disabled={loading}>
-          {loading ? 'Searching...' : 'Find'}
-        </button>
-      </form>
-
-      {error && <p className="error">{error}</p>}
-
-      {searched && !loading && !error && movies.length === 0 && (
-        <p>No search results for &quot;{query}&quot;.</p>
-      )}
-
-      {/* Hakutulokset */}
-      <div className="movie-grid">
-        {movies.map((movie) => {
-          const favorited = isFavorite(movie.id)
-          return (
-            <div key={movie.id} className="movie-card">
-              {movie.poster_path ? (
-                <img
-                  src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
-                  alt={movie.title}
-                />
-              ) : (
-                <div className="no-poster">No poster available</div>
-              )}
-
-              <h3>{movie.title}</h3>
-              <p className="release-date">
-                {movie.release_date || 'Release date not available'}
-              </p>
-
-              <button 
-                onClick={() => favorited ? handleDeleteFavorite(movie.id) : handleAddFavorite(movie)}
-              >
-                {favorited ? '💔 Remove from favorites' : '🤍 Add to favorites'}
-              </button>
-            </div>
-          )
-        })}
-      </div>
+      <MovieSearch />
 
       <NowPlayingMovies />
     </div>

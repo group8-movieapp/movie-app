@@ -1,6 +1,6 @@
 import { compare, hash } from 'bcrypt' //kirjastetaan bcrypt-kirjasto, jota käytetään salasanan hashaukseen
 import jwt from 'jsonwebtoken'
-import { createUser, findUserByEmail } from '../models/userModel.js' // Importataan createUser-funktio userModelista
+import { createUser, findUserByEmail, removeUser } from '../models/userModel.js' // Importataan createUser-funktio userModelista
 
 //Hoitaa käyttäjän rekisteröitymisen. 
 //Eli Controller ottaa frontendiltä tulevat käyttäjätiedot, tarkistaa ne ja käsittelee ne ennen kuin ne lähetetään tietokantaan.
@@ -51,6 +51,13 @@ const registerUser = async (req, res, next) => { // Luodaan registerUser-funktio
     // Muutetaan sähköposti pieniksi kirjaimiksi ja poistetaan ylimääräiset välilyönnit (trim)
     const normalizedEmail = email.trim().toLowerCase()
 
+    const existingUser = await findUserByEmail(normalizedEmail)
+    if (existingUser) {
+      const error = new Error('Email is already registered')
+      error.status = 400
+      return next(error)
+    }
+
     // Salataan salasana ennen tietokantaan tallentamista
     const hashedPassword = await hash(password, 10)
 
@@ -70,9 +77,9 @@ const registerUser = async (req, res, next) => { // Luodaan registerUser-funktio
 
 const loginUser = async (req, res, next) => {
   try {
-    const {email, password} = req.body
+    const { email, password } = req.body
 
-    if(!email || !password){
+    if (!email || !password) {
       const error = new Error('Email and password are required')
       error.status = 400
       return next(error)
@@ -97,9 +104,9 @@ const loginUser = async (req, res, next) => {
     }
 
     const token = jwt.sign(
-      {id: user.id, email: user.email, username: user.username},
+      { id: user.id, email: user.email, username: user.username },
       process.env.JWT_SECRET,
-      {expiresIn: '24h'}
+      { expiresIn: '24h' }
     )
 
     res.status(200).json({
@@ -116,14 +123,31 @@ const loginUser = async (req, res, next) => {
   }
 }
 
-export { registerUser, loginUser } // Viedään registerUser-funktio, jotta sitä voidaan käyttää muissa tiedostoissa
+const deleteUser = async (req, res, next) => {
+  try {
+    const id = req.user.id
+    const rowCount = await removeUser(id)
+
+    if (rowCount === 0) {
+      const error = new Error('User not found')
+      error.status = 404
+      return next(error)
+    }
+
+    return res.status(200).json({ message: 'User deleted succesfully', id })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export { registerUser, loginUser, deleteUser } // Viedään registerUser-funktio, jotta sitä voidaan käyttää muissa tiedostoissa
 
 
-//Toimii välikätenä HTTP-pynnön ja tietokannan välillä. Se ottaa vastaan HTTP-pyynnön, 
+//Toimii välikätenä HTTP-pynnön ja tietokannan välillä. Se ottaa vastaan HTTP-pyynnön,
 // käsittelee sen ja välittää tarvittavat tiedot tietokantamallille (userModel.js).
 
-// userController.js sisältää rekisteröitymisen toimintalogiikan: 
-// se ottaa käyttäjän lähettämät tiedot, tarkistaa ne, 
+// userController.js sisältää rekisteröitymisen toimintalogiikan:
+// se ottaa käyttäjän lähettämät tiedot, tarkistaa ne,
 // suojaa salasanan ja pyytää modelia tallentamaan käyttäjän tietokantaan.
 
 //Eli tiedot välittyvät seuraavasti: käyttäjä -> userController.js -> userModel.js -> tietokanta.

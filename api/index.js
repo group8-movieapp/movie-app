@@ -2,7 +2,6 @@ import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
 import errorHandler from './middleware/errorHandler.js'
-import testRouter from './routes/testRouter.js'
 import movieRouter from './routes/movieRouter.js' //Muutettu MVC-malliin sopivaksi, jotta reitit ja controllerit ovat erillään.
 import userRouter from './routes/userRouter.js' // Importataan userRouter
 import favoriteRouter from './routes/favoriteRouter.js' // Importataan favoriteRouter
@@ -16,7 +15,6 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
 app.use('/api/movies', movieRouter) 
-app.use('/', testRouter)
 
 // Käytetään userRouteria /api/users-polussa
 app.use('/api/users', userRouter)

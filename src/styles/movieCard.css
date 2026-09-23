@@ -1,0 +1,98 @@
+.movie-card {
+  text-align: left;
+}
+
+.movie-card-poster {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.movie-card-poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.movie-card-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.movie-card-rating {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  background: rgba(10, 12, 22, 0.75);
+  color: #fff;
+  padding: 0.3em 0.45em;
+  border-radius: 6px;
+}
+
+.movie-card-stars {
+  position: relative;
+  display: inline-block;
+  /* 5 icons * 10px + 4 gaps * 1px, so the filled row's percentage width
+     clips against a fixed, known size instead of guessing at shrink-to-fit
+     sizing from whichever row happens to be in normal flow. */
+  width: 54px;
+  height: 10px;
+  line-height: 0;
+}
+
+.stars-row {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  gap: 1px;
+  white-space: nowrap;
+}
+
+.stars-row svg {
+  display: block;
+  flex: 0 0 auto;
+}
+
+.stars-row.stars-empty svg {
+  color: rgba(255, 255, 255, 0.28);
+}
+
+.stars-row.stars-filled {
+  overflow: hidden;
+}
+.stars-row.stars-filled svg {
+  color: #fbbf24;
+}
+
+.movie-card-rating-value {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.movie-card-title {
+  margin: 0.6em 0 0.15em;
+  font-size: 0.95rem;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.movie-card-subtitle {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
