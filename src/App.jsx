@@ -27,7 +27,7 @@ function App() {
 
   // Haetaan suosikit aina kun kirjautunut käyttäjä vaihtuu (myös kirjautuessa
   // sisään ilman sivun päivitystä), ja tyhjennetään ne uloskirjautuessa niin
-  // ettei seuraava käyttäjä näe hetkeäkään edellisen suosikkeja.
+  // ettei seuraava käyttäjä näe hetkeäkään edellisen suosikkeja. Tämä siis tapahtuu vain selaimen muistissa, ei backendissä.
   useEffect(() => {
     if (user) {
       fetchFavorites()
@@ -141,7 +141,7 @@ function App() {
     }
 
     if (page === 'favorites') {
-      return <FavoritesList favorites={favorites} onDeleteFavorite={handleDeleteFavorite} />
+      return <FavoritesList favorites={favorites} onDeleteFavorite={handleDeleteFavorite} onSelectMovie={setSelectedMovie} />
     }
 
     if (page === 'login') {

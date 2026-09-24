@@ -1,5 +1,5 @@
 import express from 'express'
-import { searchMovies, nowPlayingMovies } from '../controllers/movieController.js'
+import { searchMovies, nowPlayingMovies, getMovieDetails } from '../controllers/movieController.js'
 
 
 const router = express.Router()
@@ -7,6 +7,8 @@ const router = express.Router()
 
 router.get('/search', searchMovies)
 router.get('/now-playing', nowPlayingMovies) //Muutettu MVC-malliin.
+// Rekisteröity vasta /search ja /now-playing jälkeen, jotta ':id' ei nappaa niitä ensin.
+router.get('/:id', getMovieDetails)
 
 export default router
 
