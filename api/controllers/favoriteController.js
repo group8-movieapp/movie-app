@@ -6,7 +6,7 @@ import {
 
 const createFavorite = async (req, res, next) => {
   try {
-    const userId = req.user.userId
+    const userId = req.user.id
     const { movieId } = req.body
 
     const favorite = await addFavorite(userId, movieId)
@@ -19,7 +19,7 @@ const createFavorite = async (req, res, next) => {
 
 const getUserFavorites = async (req, res, next) => {
   try {
-    const userId = req.user.userId
+    const userId = req.user.id
 
     const favorites = await getFavoritesByUser(userId)
 
@@ -31,7 +31,7 @@ const getUserFavorites = async (req, res, next) => {
 
 const removeFavorite = async (req, res, next) => {
   try {
-    const userId = req.user.userId
+    const userId = req.user.id
     const { movieId } = req.params
 
     const favorite = await deleteFavorite(userId, movieId)
