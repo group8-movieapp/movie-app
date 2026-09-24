@@ -22,9 +22,19 @@ function App() {
     const loggedUserJSON = localStorage.getItem('user')
     if (loggedUserJSON) {
       setUser(JSON.parse(loggedUserJSON))
-      fetchFavorites()
     }
   }, [])
+
+  // Haetaan suosikit aina kun kirjautunut käyttäjä vaihtuu (myös kirjautuessa
+  // sisään ilman sivun päivitystä), ja tyhjennetään ne uloskirjautuessa niin
+  // ettei seuraava käyttäjä näe hetkeäkään edellisen suosikkeja.
+  useEffect(() => {
+    if (user) {
+      fetchFavorites()
+    } else {
+      setFavorites([])
+    }
+  }, [user])
 
   // Haetaan suosikit
   const fetchFavorites = async () => {
@@ -45,7 +55,6 @@ function App() {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
     setUser(null)
-    //setFavorites([]) //Jää muistiin suosikit.
     setPage('home')
     setSelectedMovie(null)
   }
@@ -157,9 +166,16 @@ function App() {
     )
   }
 
+  // Headerista navigoitaessa suljetaan aina avoinna oleva elokuvan tietosivu,
+  // muuten renderContent() jää näyttämään sitä page-tilasta riippumatta.
+  const handleNavigate = (nextPage) => {
+    setSelectedMovie(null)
+    setPage(nextPage)
+  }
+
   return (
     <div className="app">
-      <Header page={page} setPage={setPage} user={user} onLogout={handleLogout} onDelete={handleDelete} />
+      <Header page={page} setPage={handleNavigate} user={user} onLogout={handleLogout} onDelete={handleDelete} />
       <main>
         {renderContent()}
       </main>
