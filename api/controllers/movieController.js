@@ -1,4 +1,4 @@
-import { searchMoviesFromTMDB, nowPlayingMoviesFromTMDB} from "../service/tmdbService.js"
+import { searchMoviesFromTMDB, nowPlayingMoviesFromTMDB, getMovieByIdFromTMDB } from "../service/tmdbService.js"
 
 
 
@@ -26,7 +26,18 @@ const nowPlayingMovies = async(req, res) => {
     }
 }
 
-export {searchMovies, nowPlayingMovies}
+const getMovieDetails = async (req, res) => {
+    try {
+        const movie = await getMovieByIdFromTMDB(req.params.id)
+        res.json(movie)
+    } catch (error) {
+        res.status(500).json({
+            error: 'Error while fetching movie details'
+        })
+    }
+}
+
+export {searchMovies, nowPlayingMovies, getMovieDetails}
 
 
 // searchMovies‑funktio hakee elokuvia TMDB:stä käyttäjän antamien hakuehtojen (query, year, genre) perusteella ja palauttaa ne JSON‑muodossa. 

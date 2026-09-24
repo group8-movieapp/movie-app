@@ -34,6 +34,19 @@ const nowPlayingMoviesFromTMDB = async () => {
     return data.results
 }
 
+const getMovieByIdFromTMDB = async (movieId) => {
+    const data = await fetchFromTMDB(`/movie/${movieId}`)
+
+    // TMDB's single-movie endpoint returns genres as `genres: [{ id, name }, ...]`,
+    // while the search and now-playing endpoints return `genre_ids: [id, ...]`.
+    // We normalize to genre_ids here so MovieCard works identically no matter
+    // which endpoint a movie object came from.
+    return {
+        ...data,
+        genre_ids: (data.genres || []).map((genre) => genre.id)
+    }
+}
+
 // Tämä koodi toimii TMDB:n kanssa kommunikoinnin apuna. 
 // `fetchFromTMDB hoitaa yhteisen API-kutsun ja lisää automaattisesti suomen kielen sekä TMDB-tokenin. 
 // Sen päälle on tehty omat funktiot elokuvien hakuun (`searchMoviesFromTMDB`) ja Suomessa tällä hetkellä teattereissa olevien elokuvien hakuun (`nowPlayingMoviesFromTMDB`). 
@@ -41,4 +54,4 @@ const nowPlayingMoviesFromTMDB = async () => {
 // Service tekee fetch pyynnön ja palauttaa datan controllerille.
 
 
-export { searchMoviesFromTMDB, nowPlayingMoviesFromTMDB }
+export { searchMoviesFromTMDB, nowPlayingMoviesFromTMDB, getMovieByIdFromTMDB }
