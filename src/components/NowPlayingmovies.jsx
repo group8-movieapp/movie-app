@@ -5,14 +5,13 @@ import '../styles/nowPlayingMovies.css'
 
 const API_URL = import.meta.env.VITE_API_URL
 
-export default function NowPlayingMovies() {
-
+export default function NowPlayingMovies({ onSelectMovie }) {
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const scrollRef = useRef(null);
 
-  const fetchNowPlayingMovies = async (e) => {
+  const fetchNowPlayingMovies = async () => {
     setIsLoading(true)
     setError(null)
 
@@ -21,7 +20,7 @@ export default function NowPlayingMovies() {
       setMovies(response.data)
     } catch (err) {
       console.error(err)
-      setError('Failed to search for movies.')
+      setError('Failed to fetch now playing movies.')
       setMovies([])
     } finally {
       setIsLoading(false)
@@ -32,8 +31,6 @@ export default function NowPlayingMovies() {
     fetchNowPlayingMovies()
   }, []);
 
-  // Scrolls the card row left or right by a fixed amount when a button is
-  // clicked. Bails out early if the ref isn't attached to anything yet.
   function scroll(direction) {
     const { current } = scrollRef;
     if (!current) return;
@@ -62,7 +59,12 @@ export default function NowPlayingMovies() {
 
         <div id="now-playing-movie-grid" ref={scrollRef}>
           {movies.map((movie) => (
-            <div key={movie.id} className="now-playing-movie-card">
+            <div 
+              key={movie.id} 
+              className="now-playing-movie-card" 
+              onClick={() => onSelectMovie(movie)}
+              style={{ cursor: 'pointer' }}
+            >
               <MovieCard movie={movie} />
             </div>
           ))}

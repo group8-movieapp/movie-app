@@ -2,9 +2,6 @@ import '../styles/movieCard.css'
 
 const STAR_PATH = 'M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z'
 
-// Draws one row of 5 star outlines. Two of these are stacked (an empty
-// row behind, a gold row on top clipped to a percentage width) to show
-// fractional ratings like 3.9/5 without needing separate half-star icons.
 function StarIcons() {
   return (
     <>
@@ -17,9 +14,6 @@ function StarIcons() {
   )
 }
 
-// TMDB's standard genres (id -> short English name). Used only for the
-// card's secondary line ("Genre · Year") when a movie carries genre_ids
-// (e.g. in search results).
 const GENRE_NAMES = {
   28: 'Action',
   12: 'Adventure',
@@ -42,7 +36,6 @@ const GENRE_NAMES = {
   37: 'Western'
 }
 
-// If movie has no poster, we show a placeholder with a gradient background. This array
 const PLACEHOLDER_GRADIENTS = [
   'linear-gradient(160deg, #3b5bdb, #1e3a8a)',
   'linear-gradient(160deg, #4ade80, #14532d)',
@@ -52,14 +45,14 @@ const PLACEHOLDER_GRADIENTS = [
   'linear-gradient(160deg, #fb923c, #7c2d12)'
 ]
 
-export default function MovieCard({ movie }) {
+export default function MovieCard({ movie, onClick }) {
   const year = movie.release_date ? movie.release_date.slice(0, 4) : null
   const genreName = movie.genre_ids?.length ? GENRE_NAMES[movie.genre_ids[0]] : null
   const subtitle = [genreName, year].filter(Boolean).join(' · ')
   const gradient = PLACEHOLDER_GRADIENTS[movie.id % PLACEHOLDER_GRADIENTS.length]
 
   return (
-    <div className="movie-card">
+    <div className="movie-card" onClick={onClick} style={{ cursor: 'pointer' }}>
       <div className="movie-card-poster">
         {movie.poster_path ? (
           <img
@@ -77,8 +70,6 @@ export default function MovieCard({ movie }) {
         )}
 
         {typeof movie.vote_average === 'number' && movie.vote_average > 0 && (
-          // TMDB rates movies 0-10; the assignment wants a 1-5 scale, so we
-          // halve it here and render it as a 5-star row instead of a raw number.
           (() => {
             const ratingOutOfFive = movie.vote_average / 2
             const fillPercent = Math.max(0, Math.min(100, (movie.vote_average / 10) * 100))
