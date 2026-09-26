@@ -90,12 +90,7 @@ function App() {
     }
 
     if (page === 'register') {
-      return (
-        <div>
-          <Register />
-          <button onClick={() => setPage('login')}>Back to login</button>
-        </div>
-      )
+      return <Register setPage={setPage}/>
     }
 
     // Päänäkymä (Home)

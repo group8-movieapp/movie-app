@@ -1,0 +1,58 @@
+.register-page {
+    display: flex;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+}
+
+.register-card {
+    width: 100%;
+    max-width: 380px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+}
+
+.register-card h2 {
+    margin: 0 0 1.5rem;
+    color: var(--text);
+}
+
+.register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+.register-input {
+    padding: 0.65em 0.9em;
+    font-size: 1em;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+}
+
+.register-input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.register-submit {
+    width: 100%;
+    margin-top: 0.4rem;
+}
+
+.register-success {
+    color: var(--accent);
+    margin: 1rem 0 0;
+    font-size: 0.9rem;
+}
+
+.register-error {
+    color: #f7768e;
+    margin: 1rem 0 0;
+    font-size: 0.9rem;
+}
+
