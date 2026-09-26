@@ -1,16 +1,12 @@
-//Käyttäjän rekisteröityminen tietokantaan ja kirjautuminen tietokannasta löytyvän käyttäjän perusteella.
-
-// Importataan useState-hook Reactista
 import { useState } from 'react'
-
-// Importataan axios-kirjasto HTTP-pyyntöjä varten
 import axios from 'axios'
+import '../styles/register.css'
 
-// Haetaan backendin osoite ympäristömuuttujasta
+
 const API_URL = import.meta.env.VITE_API_URL
 
 // Luodaan Register-komponentti
-const Register = () => {
+const Register = ({ setPage }) => {
 
   // Tallennetaan käyttäjänimi
   const [username, setUsername] = useState('')
@@ -60,12 +56,18 @@ const Register = () => {
       // Tyhjennetään salasanakenttä
       setPassword('')
 
+      setTimeout(() => {
+        if (setPage) {
+          setPage('login')
+        }
+      }, 1500)
+
     } catch (error) {
       // Tarkistetaan turvallisesti eri vaihtoehdot virheviestille
-      const errorMessage = 
-        error.response?.data?.error?.message || 
-        error.response?.data?.error || 
-        error.response?.data?.message || 
+      const errorMessage =
+        error.response?.data?.error?.message ||
+        error.response?.data?.error ||
+        error.response?.data?.message ||
         'Registration failed.'
 
       setError(errorMessage)
@@ -73,45 +75,45 @@ const Register = () => {
   }
 
   return (
-    <div>
-      <h2>Sign up</h2>
+    <div className='register-page'>
+      <div className='register-card'>
+        <h2>Sign up</h2>
 
-      {/* Rekisteröitymislomake */}
-      <form onSubmit={handleRegister}>
+        <form onSubmit={handleRegister} className='register-form'>
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(event) => setUsername(event.target.value)}
+            className='register-input'
+          />
 
-        {/* Käyttäjänimikenttä */}
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(event) => setUsername(event.target.value)}
-        />
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            className='register-input'
+          />
 
-        {/* Sähköpostikenttä */}
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-        />
 
-        {/* Salasanakenttä */}
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-        />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            className='register-input'
+          />
 
-        {/* Lomakkeen lähetyspainike */}
-        <button type="submit">Sign up</button>
-      </form>
+          <button type="submit" className='btn btn-primary register-submit'>Sign up</button>
+        </form>
 
-      {/* Näytetään onnistumisviesti, jos message ei ole tyhjä */}
-      {message && <p>{message}</p>}
+        {/* Näytetään onnistumisviesti, jos message ei ole tyhjä */}
+        {message && <p className='register-success'>{message}</p>}
 
-      {/* Näytetään virheilmoitus, jos error ei ole tyhjä */}
-      {error && <p>{error}</p>}
+        {/* Näytetään virheilmoitus, jos error ei ole tyhjä */}
+        {error && <p className='register-error'>{error}</p>}
+      </div>
     </div>
   )
 }

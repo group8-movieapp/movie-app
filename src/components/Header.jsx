@@ -48,7 +48,7 @@ export default function Header({ page, setPage, user, onLogout, onDelete }) {
                 Sign in
               </button>
               <button type="button" className="btn btn-primary" onClick={() => setPage('register')}>
-                Register
+                Sign up
               </button>
             </>
           )}
