@@ -39,3 +39,5 @@ export {
   getFavoritesByUser,
   deleteFavorite
 }
+
+//Tämä hoitaa homman tietokannan puolella, eli lisää, hakee ja poistaa suosikkeja käyttäjälle.

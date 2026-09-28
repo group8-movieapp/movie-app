@@ -37,7 +37,7 @@ function App() {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
     setUser(null)
-    setFavorites([]) 
+    setFavorites([]) //Tyhjennetään suosikit uloskirjautuessa välimuistista.
     setPage('home')
     setSelectedMovie(null)
   }

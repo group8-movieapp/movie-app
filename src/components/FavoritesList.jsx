@@ -73,3 +73,6 @@ export default function FavoritesList({ favorites, onDeleteFavorite, onSelectMov
     </div>
   )
 }
+
+
+//Tämä on suosikkien UI-komponentti. Näytetään käyttäjän suosikkielokuvat ja mahdollisuus poistaa ne.
