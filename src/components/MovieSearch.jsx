@@ -10,6 +10,9 @@ export default function MovieSearch({ onSelectMovie }) {
   const [movies, setMovies] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  // Tracks whether a search has ever been submitted, separately from
+  // movies.length, so the "no results" message doesn't show before the
+  // very first search.
   const [searched, setSearched] = useState(false)
 
   const handleSearch = async (e) => {
@@ -53,6 +56,8 @@ export default function MovieSearch({ onSelectMovie }) {
 
       {error && <p className="error">{error}</p>}
 
+      {/* Only show this once a search has actually run,
+          it's finished loading, it didn't error, and it came back empty. */}
       {searched && !loading && !error && movies.length === 0 && (
         <p>No search results for &quot;{query}&quot;.</p>
       )}
