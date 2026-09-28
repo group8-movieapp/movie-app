@@ -81,3 +81,5 @@ export function useFavorites(user, setPage, setSelectedMovie) {
     handleDeleteFavorite
   }
 }
+
+//Tämä pitää sisällään kaiken datan ja logiikan. Tällä tavalla app.jsx pysyy siistimpänä.

@@ -13,3 +13,5 @@ router.post('/', auth, createFavorite)
 router.delete('/:movieId', auth, removeFavorite)
 
 export default router
+
+//Tämä hoitaa url-polut suosikkien lisäämiselle, poistamiselle ja hakemiselle käyttäjälle.

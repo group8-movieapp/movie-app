@@ -47,3 +47,5 @@ export {
   getUserFavorites,
   removeFavorite
 }
+
+//Tämä siis käsittelee backendin puolella suosikkien lisäämisen, poistamisen ja hakemisen käyttäjälle.
