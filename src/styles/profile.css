@@ -1,0 +1,70 @@
+.profile-section {
+  padding: 20px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.profile-section h2 {
+  color: var (--text);
+  margin-bottom: 1rem;
+}
+
+.profile-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.profile-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.profile-username {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.profile-email {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.profile-delete-btn {
+    margin-left: auto;
+}
+
+.btn-danger {
+    background: Red;
+    border: 1px solid Red;
+    color: white;
+}
+
+.btn.danger:hover {
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    color: var(--bg);
+    opacity: 0.9;
+}

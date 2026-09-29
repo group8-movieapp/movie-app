@@ -8,6 +8,7 @@ import Header from './components/Header'
 import FavoritesList from './components/FavoritesList'
 import MovieDetailView from './components/MovieDetailView' 
 import { useFavorites } from './hooks/useFavorites' // hook
+import Profile from './components/Profile'
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -43,7 +44,7 @@ function App() {
   }
 
   const handleDelete = async () => {
-    if (!window.confirm('Delete account?')) return
+    if (!window.confirm('Are you sure you want to delete your account?')) return
 
     try {
       const token = localStorage.getItem('token')
@@ -93,6 +94,10 @@ function App() {
       return <Register setPage={setPage}/>
     }
 
+    if (page === 'profile') {
+      return <Profile user={user} setPage={setPage} onDelete={handleDelete} />
+    }
+
     // Päänäkymä (Home)
     return (
       <>
@@ -109,7 +114,7 @@ function App() {
 
   return (
     <div className="app">
-      <Header page={page} setPage={handleNavigate} user={user} onLogout={handleLogout} onDelete={handleDelete} />
+      <Header page={page} setPage={handleNavigate} user={user} onLogout={handleLogout}/>
       <main>
         {renderContent()}
       </main>
