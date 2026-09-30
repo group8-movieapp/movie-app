@@ -2,7 +2,7 @@ const TMDB_BASE_URL = 'https://api.themoviedb.org/3'
 
 const fetchFromTMDB = async (endpoint, params = {}) => {
     const searchParams = new URLSearchParams({
-        language: 'fi-FI',
+        language: 'en-EN',
         ...params
     })
 
@@ -47,11 +47,13 @@ const getMovieByIdFromTMDB = async (movieId) => {
     }
 }
 
-// Tämä koodi toimii TMDB:n kanssa kommunikoinnin apuna. 
-// `fetchFromTMDB hoitaa yhteisen API-kutsun ja lisää automaattisesti suomen kielen sekä TMDB-tokenin. 
-// Sen päälle on tehty omat funktiot elokuvien hakuun (`searchMoviesFromTMDB`) ja Suomessa tällä hetkellä teattereissa olevien elokuvien hakuun (`nowPlayingMoviesFromTMDB`). 
-// Lopuksi nämä funktiot viedään `export`-komennolla muiden tiedostojen käytettäväksi.
-// Service tekee fetch pyynnön ja palauttaa datan controllerille.
+const discoverMoviesFromTMDB = async (year, genre) => {
+    const params = {}
+    if (year) params.primary_release_year = year
+    if (genre) params.with_genres = genre
 
+    const data = await fetchFromTMDB('/discover/movie', params)
+    return data.results
+}
 
-export { searchMoviesFromTMDB, nowPlayingMoviesFromTMDB, getMovieByIdFromTMDB }
+export { searchMoviesFromTMDB, nowPlayingMoviesFromTMDB, getMovieByIdFromTMDB, discoverMoviesFromTMDB }

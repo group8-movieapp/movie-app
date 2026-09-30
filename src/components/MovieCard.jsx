@@ -19,7 +19,7 @@ function StarIcons() {
 
 // TMDB's genre ids -> short names. Only used for the card's secondary
 // line ("Genre · Year") when a movie carries genre_ids.
-const GENRE_NAMES = {
+export const GENRE_NAMES = {
   28: 'Action',
   12: 'Adventure',
   16: 'Animation',
