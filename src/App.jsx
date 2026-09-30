@@ -9,6 +9,7 @@ import FavoritesList from './components/FavoritesList'
 import MovieDetailView from './components/MovieDetailView' 
 import GroupsView from './components/GroupsView' 
 import GroupDetailView from './components/GroupDetailView' 
+import Profile from './components/Profile'
 import { useFavorites } from './hooks/useFavorites'
 import { useNavigation } from './hooks/useNavigation' 
 
@@ -17,7 +18,7 @@ const API_URL = import.meta.env.VITE_API_URL
 function App() {
   const [user, setUser] = useState(null)
 
-  
+  // Käytetään navigaatio-hookia
   const { 
     page, 
     setPage, 
@@ -53,7 +54,7 @@ function App() {
   }
 
   const handleDelete = async () => {
-    if (!window.confirm('Delete account?')) return
+    if (!window.confirm('Are you sure you want to delete your account?')) return
 
     try {
       const token = localStorage.getItem('token')
@@ -91,18 +92,17 @@ function App() {
       )
     }
 
-    // UUSI:
-  if (page === 'groupDetail' && selectedGroupId) {
-  return (
-    <GroupDetailView 
-      groupId={selectedGroupId} 
-      user={user} 
-      onBack={() => {
-        handleNavigate('groups') // Tämä tyhjentää selectedGroupId:n ja vie ryhmälistaan
-      }} 
-    />
-  )
-}
+    if (page === 'groupDetail' && selectedGroupId) {
+      return (
+        <GroupDetailView 
+          groupId={selectedGroupId} 
+          user={user} 
+          onBack={() => {
+            handleNavigate('groups')
+          }} 
+        />
+      )
+    }
 
     if (page === 'groups') {
       return (
@@ -129,6 +129,10 @@ function App() {
 
     if (page === 'register') {
       return <Register setPage={setPage} />
+    }
+
+    if (page === 'profile') {
+      return <Profile user={user} setPage={setPage} onDelete={handleDelete} />
     }
 
     // Päänäkymä (Home)

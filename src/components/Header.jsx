@@ -36,11 +36,6 @@ export default function Header({ page, setPage, user, onLogout, onDelete }) {
               <button type="button" className="btn btn-outline" onClick={onLogout}>
                 Sign out
               </button>
-              {onDelete && (
-                <button type="button" className="btn btn-outline" onClick={onDelete}>
-                  Delete account
-                </button>
-              )}
             </div>
           ) : (
             <>
