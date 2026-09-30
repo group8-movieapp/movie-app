@@ -54,12 +54,48 @@ const isGroupMember = async (groupId, userId) => {
 
 // 5. Poista ryhmä (varmistetaan, että pyytäjä on ryhmän omistaja eli owner_id)
 const deleteGroup = async (groupId, userId) => {
-  // MUUTETTU: user_id -> owner_id
-  const result = await pool.query(
-    `DELETE FROM groups WHERE id = $1 AND owner_id = $2 RETURNING id`,
-    [groupId, userId]
-  )
-  return result.rows[0]
+  const client = await pool.connect()
+
+  try {
+    await client.query('BEGIN')
+
+    // Tarkistetaan, että käyttäjä on ryhmän omistaja
+    const ownerCheck = await client.query(
+      `SELECT id
+       FROM groups
+       WHERE id = $1 AND owner_id = $2`,
+      [groupId, userId]
+    )
+
+    if (ownerCheck.rows.length === 0) {
+      await client.query('ROLLBACK')
+      return null
+    }
+
+    // Poistetaan ensin ryhmän jäsenet
+    await client.query(
+      `DELETE FROM group_members
+       WHERE group_id = $1`,
+      [groupId]
+    )
+
+    // Poistetaan itse ryhmä
+    const result = await client.query(
+      `DELETE FROM groups
+       WHERE id = $1
+       RETURNING id`,
+      [groupId]
+    )
+
+    await client.query('COMMIT')
+
+    return result.rows[0]
+  } catch (error) {
+    await client.query('ROLLBACK')
+    throw error
+  } finally {
+    client.release()
+  }
 }
 
 export {
