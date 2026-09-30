@@ -1,0 +1,52 @@
+.groups-container {
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.error-message {
+  color: #ff4d4d;
+  margin-bottom: 1rem;
+}
+
+.create-group-form {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.create-group-form input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.login-prompt {
+  margin-bottom: 2rem;
+  color: #666;
+}
+
+.groups-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.group-card {
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.2s;
+}
+
+.group-card:hover {
+  background-color: #f9f9f9;
+}
+
+.group-card h3 {
+  margin: 0;
+}
