@@ -69,7 +69,7 @@ ALTER TABLE IF EXISTS public.favorites
     ADD FOREIGN KEY (user_id)
     REFERENCES public.users (id) MATCH SIMPLE
     ON UPDATE NO ACTION
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     NOT VALID;
 
 
@@ -77,7 +77,7 @@ ALTER TABLE IF EXISTS public.reviews
     ADD CONSTRAINT reviews_user_id_fkey FOREIGN KEY (user_id)
     REFERENCES public.users (id) MATCH SIMPLE
     ON UPDATE NO ACTION
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     NOT VALID;
 
 
@@ -85,7 +85,7 @@ ALTER TABLE IF EXISTS public.groups
     ADD CONSTRAINT groups_owner_id_fkey FOREIGN KEY (owner_id)
     REFERENCES public.users (id) MATCH SIMPLE
     ON UPDATE NO ACTION
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     NOT VALID;
 
 
@@ -93,7 +93,7 @@ ALTER TABLE IF EXISTS public.group_members
     ADD CONSTRAINT group_members_user_id_fkey FOREIGN KEY (user_id)
     REFERENCES public.users (id) MATCH SIMPLE
     ON UPDATE NO ACTION
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     NOT VALID;
 
 
@@ -101,7 +101,7 @@ ALTER TABLE IF EXISTS public.group_members
     ADD CONSTRAINT group_members_group_id_fkey FOREIGN KEY (group_id)
     REFERENCES public.groups (id) MATCH SIMPLE
     ON UPDATE NO ACTION
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     NOT VALID;
 
 
@@ -109,7 +109,7 @@ ALTER TABLE IF EXISTS public.group_movies
     ADD CONSTRAINT group_movies_group_id_fkey FOREIGN KEY (group_id)
     REFERENCES public.groups (id) MATCH SIMPLE
     ON UPDATE NO ACTION
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     NOT VALID;
 
 
@@ -117,7 +117,7 @@ ALTER TABLE IF EXISTS public.watchlist
     ADD CONSTRAINT watchlist_user_id_fkey FOREIGN KEY (user_id)
     REFERENCES public.users (id) MATCH SIMPLE
     ON UPDATE NO ACTION
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     NOT VALID;
 
 END;

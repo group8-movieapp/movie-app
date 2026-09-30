@@ -26,7 +26,7 @@ export default function Profile({ user, setPage, onDelete }) {
           <p className="profile-username">{user.username}</p>
           <p className="profile-email">{user.email}</p>
         </div>
-        <button type="button" className="btn btn-danger" onClick={onDelete}>
+        <button type="button" className="btn btn-danger profile-delete-btn" onClick={onDelete}>
           Delete account
         </button>
       </div>
