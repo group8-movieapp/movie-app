@@ -1,0 +1,31 @@
+.group-detail-container,
+.group-error-container {
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.error-box {
+  color: #ff4d4d;
+  margin-top: 1rem;
+}
+
+.group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.btn-danger {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-danger:hover {
+  background-color: #e60000;
+}

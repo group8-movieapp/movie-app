@@ -6,6 +6,7 @@ import movieRouter from './routes/movieRouter.js' //Muutettu MVC-malliin sopivak
 import userRouter from './routes/userRouter.js' // Importataan userRouter
 import reviewRouter from './routes/reviewRouter.js'
 import favoriteRouter from './routes/favoriteRouter.js' // Importataan favoriteRouter
+import groupRouter from './routes/groupRoutes.js' // Importataan groupRouter
 
 
 const port = process.env.PORT || 3000
@@ -22,6 +23,7 @@ app.use('/api/users', userRouter)
 app.use('/api/favorites', favoriteRouter) // Käytetään favoriteRouteria /api/favorites-polussa
 
 app.use('/api/reviews', reviewRouter)
+app.use('/api/groups', groupRouter) // Käytetään groupRouteria /api/groups-polussa
 
 // Health check endpoint for database connectivity
 app.get('/api/health', async (req, res) => {

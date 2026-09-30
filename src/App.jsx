@@ -7,16 +7,28 @@ import MovieSearch from './components/MovieSearch'
 import Header from './components/Header'
 import FavoritesList from './components/FavoritesList'
 import MovieDetailView from './components/MovieDetailView' 
-import { useFavorites } from './hooks/useFavorites' // hook
+import GroupsView from './components/GroupsView' 
+import GroupDetailView from './components/GroupDetailView' 
+import { useFavorites } from './hooks/useFavorites'
+import { useNavigation } from './hooks/useNavigation' 
 
 const API_URL = import.meta.env.VITE_API_URL
 
 function App() {
-  const [page, setPage] = useState('home')
   const [user, setUser] = useState(null)
-  const [selectedMovie, setSelectedMovie] = useState(null)
 
-  // Tässä otetaan suosikkilogiikka käyttöön hookista. Muuten on sama kuin aiemmin, mutta suosikkien hallinta on siirretty hookiin.
+  
+  const { 
+    page, 
+    setPage, 
+    selectedMovie, 
+    setSelectedMovie, 
+    selectedGroupId, 
+    handleNavigate, 
+    handleSelectGroup 
+  } = useNavigation()
+
+  // Käytetään suosikki-hookia
   const { 
     favorites, 
     setFavorites, 
@@ -25,7 +37,6 @@ function App() {
     handleDeleteFavorite 
   } = useFavorites(user, setPage, setSelectedMovie)
 
-  // Tarkistetaan kirjautuminen käynnistyksessä
   useEffect(() => {
     const loggedUserJSON = localStorage.getItem('user')
     if (loggedUserJSON) {
@@ -37,9 +48,8 @@ function App() {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
     setUser(null)
-    setFavorites([]) //Tyhjennetään suosikit uloskirjautuessa välimuistista.
-    setPage('home')
-    setSelectedMovie(null)
+    setFavorites([])
+    handleNavigate('home')
   }
 
   const handleDelete = async () => {
@@ -67,7 +77,7 @@ function App() {
     }
   }
 
-  // Apufunktio oikean sisällön renderöintiin
+  // Sisällön renderöinti
   const renderContent = () => {
     if (selectedMovie) {
       return (
@@ -81,8 +91,36 @@ function App() {
       )
     }
 
+    // UUSI:
+  if (page === 'groupDetail' && selectedGroupId) {
+  return (
+    <GroupDetailView 
+      groupId={selectedGroupId} 
+      user={user} 
+      onBack={() => {
+        handleNavigate('groups') // Tämä tyhjentää selectedGroupId:n ja vie ryhmälistaan
+      }} 
+    />
+  )
+}
+
+    if (page === 'groups') {
+      return (
+        <GroupsView 
+          user={user} 
+          onSelectGroup={handleSelectGroup} 
+        />
+      )
+    }
+
     if (page === 'favorites') {
-      return <FavoritesList favorites={favorites} onDeleteFavorite={handleDeleteFavorite} onSelectMovie={setSelectedMovie} />
+      return (
+        <FavoritesList 
+          favorites={favorites} 
+          onDeleteFavorite={handleDeleteFavorite} 
+          onSelectMovie={setSelectedMovie} 
+        />
+      )
     }
 
     if (page === 'login') {
@@ -90,7 +128,7 @@ function App() {
     }
 
     if (page === 'register') {
-      return <Register setPage={setPage}/>
+      return <Register setPage={setPage} />
     }
 
     // Päänäkymä (Home)
@@ -102,14 +140,15 @@ function App() {
     )
   }
 
-  const handleNavigate = (nextPage) => {
-    setSelectedMovie(null)
-    setPage(nextPage)
-  }
-
   return (
     <div className="app">
-      <Header page={page} setPage={handleNavigate} user={user} onLogout={handleLogout} onDelete={handleDelete} />
+      <Header 
+        page={page} 
+        setPage={handleNavigate} 
+        user={user} 
+        onLogout={handleLogout} 
+        onDelete={handleDelete} 
+      />
       <main>
         {renderContent()}
       </main>
