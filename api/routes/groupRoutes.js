@@ -3,25 +3,31 @@ import {
   postGroup, 
   getGroups, 
   getSingleGroup, 
-  removeGroup 
+  removeGroup,
+  joinGroup,
+  getRequests,
+  acceptJoinRequest,
+  rejectJoinRequest,
+  getGroupMembers,
+  removeMember
 } from '../controllers/groupController.js'
 import { auth } from '../middleware/auth.js'
 
 const router = express.Router()
 
-// 1. Hae kaikki ryhmät (näkyy kaikille, ei vaadi authia)
 router.get('/', getGroups)
-
-// 2. Luo uusi ryhmä (vaatii kirjautumisen)
 router.post('/', auth, postGroup)
-
-// 3. Hae yksittäisen ryhmän tiedot (vaatii kirjautumisen + jäsenyyden tarkistuksen)
 router.get('/:id', auth, getSingleGroup)
-
-// 4. Poista ryhmä (vaatii kirjautumisen + omistajuuden tarkistuksen)
 router.delete('/:id', auth, removeGroup)
 
-export default router
+// Jäsenet ja liittymispyynnöt
+router.get('/:id/members', auth, getGroupMembers)
+router.post('/:id/join', auth, joinGroup)
+router.get('/:id/requests', auth, getRequests)
+router.post('/:id/requests/:userId/accept', auth, acceptJoinRequest)
+router.delete('/:id/requests/:userId', auth, rejectJoinRequest)
 
-//Tämä tiedosto määrittelee ryhmien hallintaan liittyvät reitit. Se sisältää reitit ryhmien luomiseen,
-// hakemiseen, jäsenyyden tarkistamiseen ja ryhmän poistamiseen.
+// Jäsenen poisto / ryhmästä poistuminen
+router.delete('/:id/members/:userId', auth, removeMember)
+
+export default router

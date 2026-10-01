@@ -2,11 +2,14 @@ import {
   createGroup, 
   getAllGroups, 
   getGroupById, 
-  isGroupMember, 
+  getAcceptedMembers,
+  requestToJoin,
+  getPendingRequests,
+  acceptRequest,
+  removeGroupMember,
   deleteGroup 
 } from '../models/groupModel.js'
 
-// 1. Uuden ryhmän luominen
 const postGroup = async (req, res, next) => {
   try {
     const { name } = req.body
@@ -23,7 +26,6 @@ const postGroup = async (req, res, next) => {
   }
 }
 
-// 2. Kaikkien ryhmien haku (näkyy kaikille)
 const getGroups = async (req, res, next) => {
   try {
     const groups = await getAllGroups()
@@ -33,30 +35,19 @@ const getGroups = async (req, res, next) => {
   }
 }
 
-// 3. Yksittäisen ryhmän sisällön haku (vain jäsenille)
 const getSingleGroup = async (req, res, next) => {
   try {
     const groupId = req.params.id
-    const userId = req.user.id
-
     const group = await getGroupById(groupId)
     if (!group) {
       return res.status(404).json({ error: 'Group not found' })
     }
-
-    // Tarkistetaan vaatimus: vain ryhmän jäsenet pääsevät katsomaan sisältöä
-    const isMember = await isGroupMember(groupId, userId)
-    if (!isMember) {
-      return res.status(403).json({ error: 'Access denied: You are not a member of this group' })
-    }
-
     res.json(group)
   } catch (error) {
     next(error)
   }
 }
 
-// 4. Ryhmän poistaminen (vain omistaja)
 const removeGroup = async (req, res, next) => {
   try {
     const groupId = req.params.id
@@ -73,12 +64,128 @@ const removeGroup = async (req, res, next) => {
   }
 }
 
+const getGroupMembers = async (req, res, next) => {
+  try {
+    const groupId = req.params.id
+    const members = await getAcceptedMembers(groupId)
+    res.json(members)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const joinGroup = async (req, res, next) => {
+  try {
+    const groupId = req.params.id
+    const userId = req.user.id
+
+    const group = await getGroupById(groupId)
+    if (!group) {
+      return res.status(404).json({ error: 'Group not found' })
+    }
+
+    const newRequest = await requestToJoin(groupId, userId)
+    res.status(201).json(newRequest)
+  } catch (error) {
+    if (error.code === '23505') {
+      return res.status(400).json({ error: 'You have already requested or joined this group.' })
+    }
+    next(error)
+  }
+}
+
+const getRequests = async (req, res, next) => {
+  try {
+    const groupId = req.params.id
+    const userId = req.user.id
+
+    const group = await getGroupById(groupId)
+    if (!group || group.owner_id !== userId) {
+      return res.status(403).json({ error: 'Only the group owner can view requests.' })
+    }
+
+    const requests = await getPendingRequests(groupId)
+    res.json(requests)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const acceptJoinRequest = async (req, res, next) => {
+  try {
+    const { id: groupId, userId } = req.params
+    const ownerId = req.user.id
+
+    const group = await getGroupById(groupId)
+    if (!group || group.owner_id !== ownerId) {
+      return res.status(403).json({ error: 'Only the group owner can accept requests.' })
+    }
+
+    const updated = await acceptRequest(groupId, userId)
+    if (!updated) {
+      return res.status(404).json({ error: 'Pending request not found.' })
+    }
+
+    res.json({ message: 'Request accepted successfully.' })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const rejectJoinRequest = async (req, res, next) => {
+  try {
+    const { id: groupId, userId } = req.params
+    const ownerId = req.user.id
+
+    const group = await getGroupById(groupId)
+    if (!group || group.owner_id !== ownerId) {
+      return res.status(403).json({ error: 'Only the group owner can reject requests.' })
+    }
+
+    await removeGroupMember(groupId, userId)
+    res.json({ message: 'Request rejected successfully.' })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const removeMember = async (req, res, next) => {
+  try {
+    const { id: groupId, userId } = req.params
+    const currentUserId = req.user.id
+
+    const group = await getGroupById(groupId)
+    if (!group) {
+      return res.status(404).json({ error: 'Group not found' })
+    }
+
+    const isOwner = group.owner_id === currentUserId
+    const isSelf = currentUserId === parseInt(userId)
+
+    if (!isOwner && !isSelf) {
+      return res.status(403).json({ error: 'Unauthorized to remove this member.' })
+    }
+
+    if (group.owner_id === parseInt(userId)) {
+      return res.status(400).json({ error: 'Group owner cannot be removed.' })
+    }
+
+    await removeGroupMember(groupId, userId)
+    res.json({ message: 'Member removed successfully.' })
+  } catch (error) {
+    next(error)
+  }
+}
+
 export {
   postGroup,
   getGroups,
   getSingleGroup,
-  removeGroup
+  removeGroup,
+  getGroupMembers,
+  joinGroup,
+  getRequests,
+  acceptJoinRequest,
+  rejectJoinRequest,
+  removeMember
 }
-
-//Tämä tiedosto sisältää ryhmien hallintaan liittyvät kontrollerit. Tekee funktiot ryhmien luomiseen, 
-// hakemiseen, jäsenyyden tarkistamiseen ja ryhmän poistamiseen.
