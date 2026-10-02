@@ -44,6 +44,19 @@ export default function Reviews({ movieId, user }) {
         }
     }
 
+    const formatDate = (dateString) => {
+        if (!dateString) return ''
+
+        const date = new Date(dateString)
+        return date.toLocaleDateString('fi-FI', {
+            day: 'numeric',
+            month: 'numeric',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        })
+    }
+
     return (
         <div className="reviews-container">
             <h2 className="reviews-title">Reviews</h2>
@@ -115,6 +128,7 @@ export default function Reviews({ movieId, user }) {
                         <div className="review-card-header">
                             <div className="review-card-author-group">
                                 <span className="review-author">{rev.username}</span>
+                                <span className="review-date">{formatDate(rev.created_at)}</span>
                                 <div className="review-stars-display">
                                     {[1, 2, 3, 4, 5].map((s) => (
                                         <svg
