@@ -13,7 +13,8 @@
   --accent: #7aa2f7; /* Accent color */
   --accent-hover: #6690e0; /* Accent hover color */
   --accent-purple: #bb9af7; /* Accent purple color */
-  --accennt-yellow: #e0af68; /* Accent yellow color */
+  --accent-yellow: #e0af68; /* Accent yellow color */
+  --error-red: #f7768e; /* Error red color */
 }
 
 *{

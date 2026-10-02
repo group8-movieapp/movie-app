@@ -3,7 +3,7 @@ import { addReview, getReviews, getReviewsByMovieId, deleteReview } from "../mod
 
 const newReview = async (req, res, next) => {
     try {
-        const userId = req.user.userId
+        const userId = req.user.id
         const { movie_id, review_text, rating } = req.body
         const numericRating = Number(rating)
 
@@ -57,7 +57,7 @@ const getByMovieId = async (req, res, next) => {
 const removeReview = async (req, res, next) => {
     try {
         const { id } = req.params
-        const userId = req.user.userId
+        const userId = req.user.id
 
         const rowCount = await deleteReview(id, userId)
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import Reviews from './Reviews'
 import '../styles/movieDetailView.css'
 
 const API_URL = import.meta.env.VITE_API_URL
@@ -46,9 +47,9 @@ export default function MovieDetailView({ movie, onBack, user, isFavorite, onTog
       <div className="movie-hero">
         <div className="movie-hero-poster">
           {fullMovie.poster_path ? (
-            <img 
-              src={`https://image.tmdb.org/t/p/w400${fullMovie.poster_path}`} 
-              alt={fullMovie.title} 
+            <img
+              src={`https://image.tmdb.org/t/p/w400${fullMovie.poster_path}`}
+              alt={fullMovie.title}
             />
           ) : (
             <div className="movie-hero-placeholder">
@@ -62,9 +63,9 @@ export default function MovieDetailView({ movie, onBack, user, isFavorite, onTog
 
         <div className="movie-hero-info">
           {genresText && <span className="movie-genre-tag">{genresText}</span>}
-          
+
           <h1>{fullMovie.title}</h1>
-          
+
           <div className="movie-meta">
             {year && <span>{year}</span>}
             {fullMovie.runtime && (
@@ -93,7 +94,7 @@ export default function MovieDetailView({ movie, onBack, user, isFavorite, onTog
 
           <div className="movie-action-buttons">
             {user && (
-              <button 
+              <button
                 className={`btn-action ${isFavorite(fullMovie.id) ? 'active' : ''}`}
                 onClick={() => onToggleFavorite(fullMovie)}
               >
@@ -106,9 +107,12 @@ export default function MovieDetailView({ movie, onBack, user, isFavorite, onTog
           </div>
         </div>
       </div>
+      <div className="movie-detail-reviews-section">
+        <Reviews movieId={movie.id} user={user} />
+      </div>
     </div>
   )
 }
 
-//Tämä on se sivu, jonne siirrytään aina kun klikataan jotain tiettyä elokuvaa, 
+//Tämä on se sivu, jonne siirrytään aina kun klikataan jotain tiettyä elokuvaa,
 // jotta näkee sen tarkemmat tiedot ja voi lisätä sen suosikkeihinsa.
