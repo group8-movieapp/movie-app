@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import MovieCard from './MovieCard'
+import ShareButton from './ShareFavorites'
 import '../styles/favoritesList.css'
 
 const API_URL = import.meta.env.VITE_API_URL
@@ -49,10 +50,15 @@ export default function FavoritesList({ favorites, onDeleteFavorite, onSelectMov
       </div>
     )
   }
+   
+  const ids = favorites.map((fav) => fav.movie_id)
 
   return (
     <div className="favorites-section">
-      <h2>Your Favorite Movies ({favorites.length})</h2>
+    <  div className="favorites-header">
+        <h2>Your Favorite Movies ({favorites.length})</h2>
+        <ShareButton ids={ids} />
+      </div>
 
       {loading && <p>Loading your favorites...</p>}
 
