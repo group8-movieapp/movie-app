@@ -40,7 +40,7 @@ export default function GroupDetailView({ groupId, user, onBack }) {
       }
     } catch (err) {
       console.error('Failed to fetch group details', err)
-      setError('Group not found')
+      setError('og in first to view this group')
     } finally {
       setLoading(false)
     }
@@ -202,7 +202,7 @@ export default function GroupDetailView({ groupId, user, onBack }) {
                 {member.username} {member.id === group.owner_id && '(Owner)'}
               </span>
               
-              {user && ((isOwner && member.id !== group.owner_id) || (user.id === member.id)) && (
+              {user && (isOwner ? member.id !== group.owner_id : user.id === member.id) && (
                 <button 
                   onClick={() => handleRemoveMember(member.id)} 
                   className="btn btn-danger btn-sm"
