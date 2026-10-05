@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate, BrowserRouter } from 'react-router-dom'
 import './App.css'
 import NowPlayingMovies from './components/NowPlayingmovies'
 import Login from './components/Login'
@@ -6,36 +7,37 @@ import Register from './components/Register'
 import MovieSearch from './components/MovieSearch'
 import Header from './components/Header'
 import FavoritesList from './components/FavoritesList'
-import MovieDetailView from './components/MovieDetailView' 
-import GroupsView from './components/GroupsView' 
-import GroupDetailView from './components/GroupDetailView' 
+import MovieDetailView from './components/MovieDetailView'
+import GroupsView from './components/GroupsView'
+import GroupDetailView from './components/GroupDetailView'
 import Profile from './components/Profile'
 import { useFavorites } from './hooks/useFavorites'
-import { useNavigation } from './hooks/useNavigation' 
+import { useNavigation } from './hooks/useNavigation'
+import AppRouter from './AppRouter'
 
 const API_URL = import.meta.env.VITE_API_URL
 
-function App() {
+function AppContent() {
   const [user, setUser] = useState(null)
+  const navigate = useNavigate()
 
-  // Käytetään navigaatio-hookia
-  const { 
-    page, 
-    setPage, 
-    selectedMovie, 
-    setSelectedMovie, 
-    selectedGroupId, 
-    handleNavigate, 
-    handleSelectGroup 
+  // Navigaatio-hook omistaa page- ja selectedMovie-tilan
+  const {
+    page,
+    setPage,
+    selectedMovie,
+    setSelectedMovie,
+    selectedGroupId,
+    handleNavigate,
+    handleSelectGroup
   } = useNavigation()
 
-  // Käytetään suosikki-hookia
-  const { 
-    favorites, 
-    setFavorites, 
-    isFavorite, 
-    handleToggleFavorite, 
-    handleDeleteFavorite 
+  const {
+    favorites,
+    setFavorites,
+    isFavorite,
+    handleToggleFavorite,
+    handleDeleteFavorite
   } = useFavorites(user, setPage, setSelectedMovie)
 
   useEffect(() => {
@@ -45,12 +47,18 @@ function App() {
     }
   }, [])
 
+  // Vie käyttäjä takaisin osoitteeseen "/" (esim. /shared-sivulta) ja vaihda sivu
+  const handleHeaderNavigate = (nextPage) => {
+    handleNavigate(nextPage)
+    navigate('/')
+  }
+
   const handleLogout = () => {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
     setUser(null)
     setFavorites([])
-    handleNavigate('home')
+    handleHeaderNavigate('home')
   }
 
   const handleDelete = async () => {
@@ -78,47 +86,39 @@ function App() {
     }
   }
 
-  // Sisällön renderöinti
   const renderContent = () => {
     if (selectedMovie) {
       return (
-        <MovieDetailView 
-          movie={selectedMovie} 
-          onBack={() => setSelectedMovie(null)} 
-          user={user} 
-          isFavorite={isFavorite} 
-          onToggleFavorite={handleToggleFavorite} 
+        <MovieDetailView
+          movie={selectedMovie}
+          onBack={() => setSelectedMovie(null)}
+          user={user}
+          isFavorite={isFavorite}
+          onToggleFavorite={handleToggleFavorite}
         />
       )
     }
 
     if (page === 'groupDetail' && selectedGroupId) {
       return (
-        <GroupDetailView 
-          groupId={selectedGroupId} 
-          user={user} 
-          onBack={() => {
-            handleNavigate('groups')
-          }} 
+        <GroupDetailView
+          groupId={selectedGroupId}
+          user={user}
+          onBack={() => handleNavigate('groups')}
         />
       )
     }
 
     if (page === 'groups') {
-      return (
-        <GroupsView 
-          user={user} 
-          onSelectGroup={handleSelectGroup} 
-        />
-      )
+      return <GroupsView user={user} onSelectGroup={handleSelectGroup} />
     }
 
     if (page === 'favorites') {
       return (
-        <FavoritesList 
-          favorites={favorites} 
-          onDeleteFavorite={handleDeleteFavorite} 
-          onSelectMovie={setSelectedMovie} 
+        <FavoritesList
+          favorites={favorites}
+          onDeleteFavorite={handleDeleteFavorite}
+          onSelectMovie={setSelectedMovie}
         />
       )
     }
@@ -135,7 +135,6 @@ function App() {
       return <Profile user={user} setPage={setPage} onDelete={handleDelete} />
     }
 
-    // Päänäkymä (Home)
     return (
       <>
         <MovieSearch onSelectMovie={setSelectedMovie} />
@@ -146,18 +145,24 @@ function App() {
 
   return (
     <div className="app">
-      <Header 
-        page={page} 
-        setPage={handleNavigate} 
-        user={user} 
-        onLogout={handleLogout} 
-        onDelete={handleDelete} 
+      <Header
+        page={page}
+        setPage={handleHeaderNavigate}
+        user={user}
+        onLogout={handleLogout}
+        onDelete={handleDelete}
       />
       <main>
-        {renderContent()}
+        <AppRouter home={renderContent()} />
       </main>
     </div>
   )
 }
 
-export default App
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
+  )
+}
