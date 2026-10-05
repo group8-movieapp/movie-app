@@ -7,7 +7,10 @@ import {
   getPendingRequests,
   acceptRequest,
   removeGroupMember,
-  deleteGroup 
+  deleteGroup,
+  isGroupMember,
+  addGroupMovie,
+  getGroupMovies
 } from '../models/groupModel.js'
 
 const postGroup = async (req, res, next) => {
@@ -177,6 +180,52 @@ const removeMember = async (req, res, next) => {
   }
 }
 
+const getGroupMoviesController = async (req, res, next) => {
+  try {
+    const groupId = req.params.id
+    const userId = req.user.id
+
+    const isMember = await isGroupMember(groupId, userId)
+    const group = await getGroupById(groupId)
+    
+    if (!group || (!isMember && group.owner_id !== userId)) {
+      return res.status(403).json({ error: 'Access denied to group movies.' })
+    }
+
+    const movies = await getGroupMovies(groupId)
+    res.json(movies)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const addMovieToGroupController = async (req, res, next) => {
+  try {
+    const groupId = req.params.id
+    const userId = req.user.id
+    const { movieId } = req.body
+
+    if (!movieId) {
+      return res.status(400).json({ error: 'Movie ID is required' })
+    }
+
+    const isMember = await isGroupMember(groupId, userId)
+    const group = await getGroupById(groupId)
+
+    if (!group || (!isMember && group.owner_id !== userId)) {
+      return res.status(403).json({ error: 'Only group members can add movies.' })
+    }
+
+    const newMovie = await addGroupMovie(groupId, movieId)
+    res.status(201).json(newMovie)
+  } catch (error) {
+    if (error.code === '23505') {
+      return res.status(400).json({ error: 'Movie is already added to this group.' })
+    }
+    next(error)
+  }
+}
+
 export {
   postGroup,
   getGroups,
@@ -187,5 +236,7 @@ export {
   getRequests,
   acceptJoinRequest,
   rejectJoinRequest,
-  removeMember
+  removeMember,
+  getGroupMoviesController,
+  addMovieToGroupController
 }

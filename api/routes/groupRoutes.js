@@ -1,4 +1,5 @@
 import express from 'express'
+
 import { 
   postGroup, 
   getGroups, 
@@ -9,7 +10,9 @@ import {
   acceptJoinRequest,
   rejectJoinRequest,
   getGroupMembers,
-  removeMember
+  removeMember,
+  getGroupMoviesController,
+  addMovieToGroupController
 } from '../controllers/groupController.js'
 import { auth } from '../middleware/auth.js'
 
@@ -29,5 +32,9 @@ router.delete('/:id/requests/:userId', auth, rejectJoinRequest)
 
 // Jäsenen poisto / ryhmästä poistuminen
 router.delete('/:id/members/:userId', auth, removeMember)
+
+// Ryhmän elokuvat
+router.get('/:id/movies', auth, getGroupMoviesController)
+router.post('/:id/movies', auth, addMovieToGroupController)
 
 export default router

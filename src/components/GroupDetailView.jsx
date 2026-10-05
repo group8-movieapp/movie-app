@@ -8,6 +8,12 @@ export default function GroupDetailView({ groupId, user, onBack }) {
   const [group, setGroup] = useState(null)
   const [members, setMembers] = useState([])
   const [requests, setRequests] = useState([])
+  const [movies, setMovies] = useState([])
+  
+  // Tilat elokuvahaulle
+  const [searchQuery, setSearchQuery] = useState('')
+  const [movieResults, setMovieResults] = useState([])
+
   const [hasRequested, setHasRequested] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
@@ -29,7 +35,15 @@ export default function GroupDetailView({ groupId, user, onBack }) {
       const membersRes = await axios.get(`${API_URL}/api/groups/${groupId}/members`, { headers })
       setMembers(membersRes.data)
 
-      // 3. Jos käyttäjä on omistaja, hae odottavat pyynnöt
+      // 3. Hae ryhmän elokuvat (jos käyttäjä on jäsen tai omistaja)
+      try {
+        const moviesRes = await axios.get(`${API_URL}/api/groups/${groupId}/movies`, { headers })
+        setMovies(moviesRes.data)
+      } catch (movieErr) {
+        console.error('Could not fetch movies (might not be a member yet)', movieErr)
+      }
+
+      // 4. Jos käyttäjä on omistaja, hae odottavat pyynnöt
       if (user && response.data.owner_id === user.id) {
         try {
           const reqResponse = await axios.get(`${API_URL}/api/groups/${groupId}/requests`, { headers })
@@ -40,7 +54,7 @@ export default function GroupDetailView({ groupId, user, onBack }) {
       }
     } catch (err) {
       console.error('Failed to fetch group details', err)
-      setError('Group not found')
+      setError('Log in first to view this group')
     } finally {
       setLoading(false)
     }
@@ -125,6 +139,44 @@ export default function GroupDetailView({ groupId, user, onBack }) {
     }
   }
 
+  // Hae elokuvia nimellä oikeaa reittiä käyttäen
+  const handleSearchMovies = async () => {
+    if (!searchQuery.trim()) return
+    try {
+      const token = localStorage.getItem('token')
+      const res = await axios.get(`${API_URL}/api/movies/search?query=${encodeURIComponent(searchQuery)}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      setMovieResults(res.data)
+    } catch (err) {
+      console.error('Search error:', err)
+      alert('Failed to search movies')
+    }
+  }
+
+  // Lisää valittu elokuva ryhmään haun kautta
+  const handleAddMovieFromSearch = async (movie) => {
+    try {
+      const token = localStorage.getItem('token')
+      await axios.post(`${API_URL}/api/groups/${groupId}/movies`, 
+        { movieId: parseInt(movie.id) }, 
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      
+      setMovies(prev => [...prev, { 
+        id: Date.now(), 
+        group_id: Number(groupId), 
+        movie_id: movie.id, 
+        title: movie.title || movie.name 
+      }])
+
+      setMovieResults([])
+      setSearchQuery('')
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failed to add movie')
+    }
+  }
+
   if (loading) return <div className="loading">Loading group...</div>
 
   if (error) {
@@ -153,7 +205,6 @@ export default function GroupDetailView({ groupId, user, onBack }) {
         )}
       </div>
 
-      {/* Liittymisnappi tavalliselle käyttäjälle (jos ei jäsen eikä omistaja) */}
       {user && !isOwner && !isMember && (
         <div className="join-section">
           {hasRequested ? (
@@ -166,7 +217,6 @@ export default function GroupDetailView({ groupId, user, onBack }) {
         </div>
       )}
 
-      {/* Ryhmän omistajan näkymä: Odottavat pyynnöt */}
       {isOwner && (
         <div className="owner-requests-section">
           <h3>Pending Join Requests</h3>
@@ -192,7 +242,53 @@ export default function GroupDetailView({ groupId, user, onBack }) {
         </div>
       )}
 
-      {/* Jäsenlista */}
+      {/* Elokuvat-osio */}
+      {(isMember || isOwner) && (
+        <div className="movies-section">
+          <h3>Group Movies ({movies.length})</h3>
+          
+          <div className="movie-search-box">
+            <div className="movie-search-input-group">
+              <input 
+                type="text" 
+                placeholder="Search movie by name..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <button onClick={handleSearchMovies} className="btn btn-primary">Search</button>
+            </div>
+
+            {movieResults.length > 0 && (
+              <ul className="search-results-list">
+                {movieResults.map(movie => (
+                  <li key={movie.id} className="search-result-item">
+                    <span>{movie.title || movie.name}</span>
+                    <button 
+                      onClick={() => handleAddMovieFromSearch(movie)} 
+                      className="btn btn-success btn-sm"
+                    >
+                      Add to Group
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <ul className="movie-list">
+            {movies.length === 0 ? (
+              <p className="no-movies-text">No movies added to this group yet.</p>
+            ) : (
+              movies.map(m => (
+                <li key={m.id} className="movie-item">
+                  <span className="movie-title">{m.title || `Movie ID: ${m.movie_id}`}</span>
+                </li>
+              ))
+            )}
+          </ul>
+        </div>
+      )}
+
       <div className="members-section">
         <h3>Members ({members.length})</h3>
         <ul className="member-list">
@@ -202,7 +298,7 @@ export default function GroupDetailView({ groupId, user, onBack }) {
                 {member.username} {member.id === group.owner_id && '(Owner)'}
               </span>
               
-              {user && ((isOwner && member.id !== group.owner_id) || (user.id === member.id)) && (
+              {user && (isOwner ? member.id !== group.owner_id : user.id === member.id) && (
                 <button 
                   onClick={() => handleRemoveMember(member.id)} 
                   className="btn btn-danger btn-sm"
