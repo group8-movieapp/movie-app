@@ -142,6 +142,26 @@ const deleteGroup = async (groupId, userId) => {
   }
 }
 
+// 11. Lisää elokuva ryhmälle
+const addGroupMovie = async (groupId, movieId) => {
+  const result = await pool.query(
+    `INSERT INTO group_movies (group_id, movie_id) 
+     VALUES ($1, $2) 
+     RETURNING *`,
+    [groupId, movieId]
+  )
+  return result.rows[0]
+}
+
+// 12. Hae ryhmään lisätyt elokuvat
+const getGroupMovies = async (groupId) => {
+  const result = await pool.query(
+    `SELECT id, group_id, movie_id FROM group_movies WHERE group_id = $1`,
+    [groupId]
+  )
+  return result.rows
+}
+
 export {
   createGroup,
   getAllGroups,
@@ -152,5 +172,7 @@ export {
   getPendingRequests,
   acceptRequest,
   removeGroupMember,
-  deleteGroup
+  deleteGroup,
+  addGroupMovie,
+  getGroupMovies
 }
