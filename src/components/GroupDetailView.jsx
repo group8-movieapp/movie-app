@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import MovieCard from './MovieCard'
 import '../styles/GroupDetailView.css'
 
 const API_URL = import.meta.env.VITE_API_URL
 
-export default function GroupDetailView({ groupId, user, onBack }) {
+export default function GroupDetailView({ groupId, user, onBack, onSelectMovie }) {
   const [group, setGroup] = useState(null)
   const [members, setMembers] = useState([])
   const [requests, setRequests] = useState([])
@@ -35,10 +36,25 @@ export default function GroupDetailView({ groupId, user, onBack }) {
       const membersRes = await axios.get(`${API_URL}/api/groups/${groupId}/members`, { headers })
       setMembers(membersRes.data)
 
-      // 3. Hae ryhmän elokuvat (jos käyttäjä on jäsen tai omistaja)
+      // 3. Hae ryhmän elokuvat ja rikastuta ne tarvittaessa TMDB-tiedoilla
       try {
         const moviesRes = await axios.get(`${API_URL}/api/groups/${groupId}/movies`, { headers })
-        setMovies(moviesRes.data)
+        const rawMovies = moviesRes.data
+
+        // Haetaan elokuville tarkemmat tiedot (poster_path, title jne.) jos niitä ei tule suoraan ryhmän elokuvista
+        const detailedMovies = await Promise.all(
+          rawMovies.map(async (item) => {
+            // Jos backend palauttaa jo tarvittavat tiedot tai pelkän movie_id:n
+            const movieId = item.movie_id || item.id
+            try {
+              const movieRes = await axios.get(`${API_URL}/api/movies/${movieId}`)
+              return { ...item, ...movieRes.data, id: movieId }
+            } catch (err) {
+              return { ...item, id: movieId, title: item.title || `Movie ID: ${movieId}` }
+            }
+          })
+        )
+        setMovies(detailedMovies)
       } catch (movieErr) {
         console.error('Could not fetch movies (might not be a member yet)', movieErr)
       }
@@ -163,17 +179,24 @@ export default function GroupDetailView({ groupId, user, onBack }) {
         { headers: { Authorization: `Bearer ${token}` } }
       )
       
-      setMovies(prev => [...prev, { 
-        id: Date.now(), 
-        group_id: Number(groupId), 
-        movie_id: movie.id, 
-        title: movie.title || movie.name 
-      }])
-
+      setMovies(prev => [...prev, movie])
       setMovieResults([])
       setSearchQuery('')
     } catch (err) {
       alert(err.response?.data?.error || 'Failed to add movie')
+    }
+  }
+
+  // Poista elokuva ryhmästä (jos teillä on tämä ominaisuus)
+  const handleRemoveMovieFromGroup = async (movieId) => {
+    try {
+      const token = localStorage.getItem('token')
+      await axios.delete(`${API_URL}/api/groups/${groupId}/movies/${movieId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      setMovies(prev => prev.filter(m => (m.movie_id || m.id) !== movieId))
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failed to remove movie from group')
     }
   }
 
@@ -275,17 +298,33 @@ export default function GroupDetailView({ groupId, user, onBack }) {
             )}
           </div>
 
-          <ul className="movie-list">
+          {/* Elokuvagridi MovieCard-komponentilla */}
+          <div className="movie-grid">
             {movies.length === 0 ? (
               <p className="no-movies-text">No movies added to this group yet.</p>
             ) : (
-              movies.map(m => (
-                <li key={m.id} className="movie-item">
-                  <span className="movie-title">{m.title || `Movie ID: ${m.movie_id}`}</span>
-                </li>
-              ))
+              movies.map(movie => {
+                const mId = movie.movie_id || movie.id
+                return (
+                  <div key={mId} className="group-movie-card-wrapper">
+                    <MovieCard
+                      movie={movie}
+                      onClick={() => onSelectMovie?.(movie)}
+                    />
+                    {isOwner && (
+                      <button 
+                        onClick={() => handleRemoveMovieFromGroup(mId)} 
+                        className="btn btn-danger btn-sm watchlist-remove-btn"
+                        style={{ marginTop: '8px', width: '100%' }}
+                      >
+                        Remove from Group (!ei toimi!)
+                      </button>
+                    )}
+                  </div>
+                )
+              })
             )}
-          </ul>
+          </div>
         </div>
       )}
 

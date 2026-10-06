@@ -46,7 +46,7 @@ export default function FavoritesList({ favorites, onDeleteFavorite, onSelectMov
     return (
       <div className="favorites-section">
         <h2>Your Favorites</h2>
-        <p>No favorites yet. Add movies from the search results!</p>
+        <p>No favorites yet. Add your favourite movies here!</p>
       </div>
     )
   }
