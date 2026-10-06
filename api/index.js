@@ -7,6 +7,7 @@ import userRouter from './routes/userRouter.js' // Importataan userRouter
 import reviewRouter from './routes/reviewRouter.js'
 import favoriteRouter from './routes/favoriteRouter.js' // Importataan favoriteRouter
 import groupRouter from './routes/groupRoutes.js' // Importataan groupRouter
+import watchlistRoutes from './routes/watchlistRoutes.js'
 
 
 const port = process.env.PORT || 3000
@@ -21,7 +22,7 @@ app.use('/api/movies', movieRouter)
 // Käytetään userRouteria /api/users-polussa
 app.use('/api/users', userRouter)
 app.use('/api/favorites', favoriteRouter) // Käytetään favoriteRouteria /api/favorites-polussa
-
+app.use('/api/watchlist', watchlistRoutes) // Käytetään watchlistRoutesia /api/watchlist-polussa
 app.use('/api/reviews', reviewRouter)
 app.use('/api/groups', groupRouter) // Käytetään groupRouteria /api/groups-polussa
 

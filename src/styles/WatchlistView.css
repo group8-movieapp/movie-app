@@ -1,0 +1,39 @@
+.watchlist-item .btn-danger {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  transition: background-color 0.2s;
+}
+
+.watchlist-item .btn-danger:hover {
+  background-color: #dc2626;
+} */
+
+.watchlist-section {
+  padding: 20px;
+}
+
+.watchlist-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.watchlist-header h2 {
+  margin: 0;
+}
+
+.watchlist-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.watchlist-remove-btn {
+  width: 100%;
+}

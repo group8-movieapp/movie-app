@@ -226,6 +226,7 @@ const addMovieToGroupController = async (req, res, next) => {
   }
 }
 
+
 export {
   postGroup,
   getGroups,
