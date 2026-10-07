@@ -12,7 +12,8 @@ import {
   getGroupMembers,
   removeMember,
   getGroupMoviesController,
-  addMovieToGroupController
+  addMovieToGroupController,
+  removeMovieFromGroupController
 } from '../controllers/groupController.js'
 import { auth } from '../middleware/auth.js'
 
@@ -36,5 +37,5 @@ router.delete('/:id/members/:userId', auth, removeMember)
 // Ryhmän elokuvat
 router.get('/:id/movies', auth, getGroupMoviesController)
 router.post('/:id/movies', auth, addMovieToGroupController)
-
+router.delete('/:id/movies/:movieId', auth, removeMovieFromGroupController)
 export default router

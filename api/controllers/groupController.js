@@ -10,7 +10,8 @@ import {
   deleteGroup,
   isGroupMember,
   addGroupMovie,
-  getGroupMovies
+  getGroupMovies,
+  removeGroupMovie
 } from '../models/groupModel.js'
 
 const postGroup = async (req, res, next) => {
@@ -225,6 +226,39 @@ const addMovieToGroupController = async (req, res, next) => {
     next(error)
   }
 }
+const removeMovieFromGroupController = async (req, res, next) => {
+  try {
+    const groupId = req.params.id
+    const movieId = req.params.movieId
+    const userId = req.user.id
+
+    const group = await getGroupById(groupId)
+
+    if (!group) {
+      return res.status(404).json({ error: 'Group not found' })
+    }
+
+    if (group.owner_id !== userId) {
+      return res.status(403).json({
+        error: 'Only the group owner can remove movies.'
+      })
+    }
+
+    const deletedMovie = await removeGroupMovie(groupId, movieId)
+
+    if (!deletedMovie) {
+      return res.status(404).json({
+        error: 'Movie not found in this group.'
+      })
+    }
+
+    res.json({
+      message: 'Movie removed from group successfully.'
+    })
+  } catch (error) {
+    next(error)
+  }
+}
 
 
 export {
@@ -239,5 +273,7 @@ export {
   rejectJoinRequest,
   removeMember,
   getGroupMoviesController,
-  addMovieToGroupController
+  addMovieToGroupController,
+  removeMovieFromGroupController
+
 }
