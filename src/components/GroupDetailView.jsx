@@ -317,7 +317,7 @@ export default function GroupDetailView({ groupId, user, onBack, onSelectMovie }
                         className="btn btn-danger btn-sm watchlist-remove-btn"
                         style={{ marginTop: '8px', width: '100%' }}
                       >
-                        Remove from Group (!ei toimi!)
+                        Remove from Group
                       </button>
                     )}
                   </div>
