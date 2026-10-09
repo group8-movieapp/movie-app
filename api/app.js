@@ -7,6 +7,7 @@ import userRouter from './routes/userRouter.js' // Importataan userRouter
 import reviewRouter from './routes/reviewRouter.js'
 import favoriteRouter from './routes/favoriteRouter.js' // Importataan favoriteRouter
 import groupRouter from './routes/groupRoutes.js' // Importataan groupRouter
+import watchlistRouter from './routes/watchlistRouter.js'
 
 const app = express()
 app.use(cors())
@@ -18,7 +19,7 @@ app.use('/api/movies', movieRouter)
 // Käytetään userRouteria /api/users-polussa
 app.use('/api/users', userRouter)
 app.use('/api/favorites', favoriteRouter) // Käytetään favoriteRouteria /api/favorites-polussa
-
+app.use('/api/watchlist', watchlistRouter) // Käytetään watchlistRoutesia /api/watchlist-polussa
 app.use('/api/reviews', reviewRouter)
 app.use('/api/groups', groupRouter) // Käytetään groupRouteria /api/groups-polussa
 
