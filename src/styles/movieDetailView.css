@@ -102,11 +102,6 @@
   background-color: #ef4444;
 }
 
-.btn-action.secondary {
-  background-color: #1e2230;
-  border: 1px solid #334155;
-}
-
 .movie-reviews-section {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -203,4 +198,29 @@
   color: #94a3b8;
   font-size: 14px;
   text-align: center;
+}
+.movie-group-picker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+
+.movie-group-picker label {
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.movie-group-picker select {
+  background-color: #1a1e29;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: white;
+}
+
+.no-groups-hint {
+  color: #94a3b8;
+  font-size: 14px;
 }
