@@ -18,23 +18,24 @@
 
 .status-pending {
   font-style: italic;
-  color: #666;
+  color: var(--text-muted);
 }
 
 .owner-requests-section {
   margin: 1.5rem 0;
-  background: #f9f9f9;
+  background: var(--surface);
   padding: 1.5rem;
   border-radius: 8px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border);
 }
 
 .owner-requests-section h3 {
   margin-bottom: 1rem;
+  color: var(--text);
 }
 
 .no-requests {
-  color: #666;
+  color: var(--text-muted);
 }
 
 .request-list, .member-list {
@@ -49,13 +50,14 @@
   align-items: center;
   margin: 0.5rem 0;
   padding: 0.75rem 1rem;
-  background: #fff;
-  border: 1px solid #ddd;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 6px;
 }
 
 .request-username, .member-username {
   font-weight: 500;
+  color: var(--text);
 }
 
 .request-actions {
@@ -63,9 +65,12 @@
   gap: 0.5rem;
 }
 
+/* Hyväksy/hylkää-napit — samaa Tokyo Night -paletia kuin muualla
+   sovelluksessa (vihreä/punainen eivät ole index.css:n muuttujissa,
+   mutta sama punainen #f7768e on jo käytössä esim. login-virheissä). */
 .btn-success {
-  background-color: #28a745;
-  color: white;
+  background-color: #9ece6a;
+  color: var(--bg);
   border: none;
   padding: 0.25rem 0.75rem;
   border-radius: 4px;
@@ -73,12 +78,12 @@
 }
 
 .btn-success:hover {
-  background-color: #218838;
+  background-color: #86b85a;
 }
 
 .btn-reject {
-  background-color: #dc3545;
-  color: white;
+  background-color: #f7768e;
+  color: var(--bg);
   border: none;
   padding: 0.25rem 0.75rem;
   border-radius: 4px;
@@ -86,7 +91,7 @@
 }
 
 .btn-reject:hover {
-  background-color: #c82333;
+  background-color: #db6178;
 }
 
 .btn-sm {
@@ -105,89 +110,29 @@
 }
 
 .error-box {
-  background: #f8d7da;
-  color: #721c24;
+  background: var(--surface);
+  color: #f7768e;
   padding: 1rem;
   border-radius: 6px;
-  border: 1px solid #f5c6cb;
+  border: 1px solid #f7768e;
 }
 
-/* --- Elokuvaosion omat tyylit (sovitettu alkuperäiseen tyyliin) --- */
+/* Elokuvaosio tyylitelty samalla periaatteella kuin Favorites-sivu
+   (favoritesList.css): ei omaa laatikkoa/taustaa, vain otsikko + ruudukko
+   suoraan sivun tummalla pohjalla, jotta se näyttää yhtenäiseltä muun
+   sovelluksen kanssa. Itse kortit (.favorite-card / .favorite-remove-btn)
+   tulevat suoraan favoritesList.css:stä, samoja luokkia uudelleenkäyttäen. */
 
 .movies-section {
   margin-top: 2rem;
-  background: #f9f9f9;
-  padding: 1.5rem;
-  border-radius: 8px;
-  border: 1px solid #e0e0e0;
 }
 
 .movies-section h3 {
   margin-bottom: 1rem;
-}
-
-.movie-search-box {
-  margin-bottom: 1.5rem;
-}
-
-.movie-search-input-group {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.movie-search-input-group input {
-  padding: 0.5rem 0.75rem;
-  border-radius: 6px;
-  border: 1px solid #ddd;
-  flex: 1;
-  font-size: 1rem;
-}
-
-.search-results-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.search-result-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid #eee;
-}
-
-.search-result-item:last-child {
-  border-bottom: none;
-}
-
-.movie-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.movie-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 0.5rem 0;
-  padding: 0.75rem 1rem;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-}
-
-.movie-title {
-  font-weight: 500;
+  color: var(--text);
 }
 
 .no-movies-text {
-  color: #666;
+  color: var(--text-muted);
   margin: 0;
 }

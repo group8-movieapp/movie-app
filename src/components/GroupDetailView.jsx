@@ -10,10 +10,6 @@ export default function GroupDetailView({ groupId, user, onBack, onSelectMovie }
   const [members, setMembers] = useState([])
   const [requests, setRequests] = useState([])
   const [movies, setMovies] = useState([])
-  
-  // Tilat elokuvahaulle
-  const [searchQuery, setSearchQuery] = useState('')
-  const [movieResults, setMovieResults] = useState([])
 
   const [hasRequested, setHasRequested] = useState(false)
   const [error, setError] = useState('')
@@ -155,39 +151,7 @@ export default function GroupDetailView({ groupId, user, onBack, onSelectMovie }
     }
   }
 
-  // Hae elokuvia nimellä oikeaa reittiä käyttäen
-  const handleSearchMovies = async () => {
-    if (!searchQuery.trim()) return
-    try {
-      const token = localStorage.getItem('token')
-      const res = await axios.get(`${API_URL}/api/movies/search?query=${encodeURIComponent(searchQuery)}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      setMovieResults(res.data)
-    } catch (err) {
-      console.error('Search error:', err)
-      alert('Failed to search movies')
-    }
-  }
-
-  // Lisää valittu elokuva ryhmään haun kautta
-  const handleAddMovieFromSearch = async (movie) => {
-    try {
-      const token = localStorage.getItem('token')
-      await axios.post(`${API_URL}/api/groups/${groupId}/movies`, 
-        { movieId: parseInt(movie.id) }, 
-        { headers: { Authorization: `Bearer ${token}` } }
-      )
-      
-      setMovies(prev => [...prev, movie])
-      setMovieResults([])
-      setSearchQuery('')
-    } catch (err) {
-      alert(err.response?.data?.error || 'Failed to add movie')
-    }
-  }
-
-  // Poista elokuva ryhmästä (jos teillä on tämä ominaisuus)
+  // Poista elokuva ryhmästä (omistaja)
   const handleRemoveMovieFromGroup = async (movieId) => {
     try {
       const token = localStorage.getItem('token')
@@ -265,40 +229,12 @@ export default function GroupDetailView({ groupId, user, onBack, onSelectMovie }
         </div>
       )}
 
-      {/* Elokuvat-osio */}
+      {/* Elokuvat-osio. Elokuvia lisätään nyt MovieDetailView.jsx:n kautta
+          ("Add to group" -valikko), ei enää erillisellä haulla tältä sivulta. */}
       {(isMember || isOwner) && (
         <div className="movies-section">
           <h3>Group Movies ({movies.length})</h3>
-          
-          <div className="movie-search-box">
-            <div className="movie-search-input-group">
-              <input 
-                type="text" 
-                placeholder="Search movie by name..." 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <button onClick={handleSearchMovies} className="btn btn-primary">Search</button>
-            </div>
 
-            {movieResults.length > 0 && (
-              <ul className="search-results-list">
-                {movieResults.map(movie => (
-                  <li key={movie.id} className="search-result-item">
-                    <span>{movie.title || movie.name}</span>
-                    <button 
-                      onClick={() => handleAddMovieFromSearch(movie)} 
-                      className="btn btn-success btn-sm"
-                    >
-                      Add to Group
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          {/* Elokuvagridi MovieCard-komponentilla */}
           <div className="movie-grid">
             {movies.length === 0 ? (
               <p className="no-movies-text">No movies added to this group yet.</p>
@@ -306,16 +242,15 @@ export default function GroupDetailView({ groupId, user, onBack, onSelectMovie }
               movies.map(movie => {
                 const mId = movie.movie_id || movie.id
                 return (
-                  <div key={mId} className="group-movie-card-wrapper">
+                  <div key={mId} className="favorite-card">
                     <MovieCard
                       movie={movie}
                       onClick={() => onSelectMovie?.(movie)}
                     />
-                    {isOwner && (
+                    {(isOwner || isMember) && (
                       <button 
                         onClick={() => handleRemoveMovieFromGroup(mId)} 
-                        className="btn btn-danger btn-sm watchlist-remove-btn"
-                        style={{ marginTop: '8px', width: '100%' }}
+                        className="btn btn-outline favorite-remove-btn"
                       >
                         Remove from Group
                       </button>

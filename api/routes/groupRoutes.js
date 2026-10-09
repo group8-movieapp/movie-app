@@ -3,6 +3,7 @@ import express from 'express'
 import { 
   postGroup, 
   getGroups, 
+  getMyGroups,
   getSingleGroup, 
   removeGroup,
   joinGroup,
@@ -20,6 +21,8 @@ import { auth } from '../middleware/auth.js'
 const router = express.Router()
 
 router.get('/', getGroups)
+// Rekisteröity ennen '/:id':tä, muuten "mine" tulkittaisiin ryhmän id:ksi.
+router.get('/mine', auth, getMyGroups)
 router.post('/', auth, postGroup)
 router.get('/:id', auth, getSingleGroup)
 router.delete('/:id', auth, removeGroup)

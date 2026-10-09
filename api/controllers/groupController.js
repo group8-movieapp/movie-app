@@ -11,7 +11,8 @@ import {
   isGroupMember,
   addGroupMovie,
   getGroupMovies,
-  removeGroupMovie
+  removeGroupMovie,
+  getUserGroups
 } from '../models/groupModel.js'
 
 const postGroup = async (req, res, next) => {
@@ -33,6 +34,19 @@ const postGroup = async (req, res, next) => {
 const getGroups = async (req, res, next) => {
   try {
     const groups = await getAllGroups()
+    res.json(groups)
+  } catch (error) {
+    next(error)
+  }
+}
+
+// Hae vain käyttäjän omat ryhmät (joissa hän on hyväksytty jäsen).
+// Rekisteröity reitissä ennen /:id:tä, muuten "/mine" tulkittaisiin
+// elokuvan id:n tapaan ryhmän id:ksi.
+const getMyGroups = async (req, res, next) => {
+  try {
+    const userId = req.user.id
+    const groups = await getUserGroups(userId)
     res.json(groups)
   } catch (error) {
     next(error)
@@ -238,9 +252,13 @@ const removeMovieFromGroupController = async (req, res, next) => {
       return res.status(404).json({ error: 'Group not found' })
     }
 
-    if (group.owner_id !== userId) {
+    const isMember = await isGroupMember(groupId, userId)
+
+    // Kuka tahansa ryhmän jäsen (tai omistaja) saa poistaa elokuvan,
+    // samaan tapaan kuin lisääminenkin on avoinna kaikille jäsenille.
+    if (!isMember && group.owner_id !== userId) {
       return res.status(403).json({
-        error: 'Only the group owner can remove movies.'
+        error: 'Only group members can remove movies.'
       })
     }
 
@@ -264,6 +282,7 @@ const removeMovieFromGroupController = async (req, res, next) => {
 export {
   postGroup,
   getGroups,
+  getMyGroups,
   getSingleGroup,
   removeGroup,
   getGroupMembers,

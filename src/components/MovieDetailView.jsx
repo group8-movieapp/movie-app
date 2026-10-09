@@ -16,6 +16,9 @@ export default function MovieDetailView({
   onToggleWatchlist 
 }) {
   const [details, setDetails] = useState(null)
+  const [myGroups, setMyGroups] = useState([])
+  const [selectedGroupId, setSelectedGroupId] = useState('')
+  const [groupMovieIds, setGroupMovieIds] = useState([])
 
   // Haetaan elokuvan täydet tiedot TMDB:stä, jotta saadaan mm. genret ja runtime.
   useEffect(() => {
@@ -31,6 +34,45 @@ export default function MovieDetailView({
     return () => { cancelled = true }
   }, [movie.id])
 
+  // Haetaan käyttäjän omat ryhmät, jotta "lisää ryhmään" -valikkoon tulee
+  // oikeat vaihtoehdot. Haetaan vain kirjautuneena.
+  useEffect(() => {
+    if (!user) {
+      setMyGroups([])
+      return
+    }
+
+    const token = localStorage.getItem('token')
+    axios.get(`${API_URL}/api/groups/mine`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then((res) => {
+        setMyGroups(res.data)
+        // Esivalitaan ensimmäinen ryhmä, jotta yhden ryhmän tapauksessa
+        // riittää yksi klikkaus.
+        if (res.data.length > 0) setSelectedGroupId(String(res.data[0].id))
+      })
+      .catch((err) => console.error('Failed to fetch groups', err))
+  }, [user])
+
+  // Haetaan valitun ryhmän elokuvat, jotta napin tila (lisätty / ei lisätty)
+  // voidaan päätellä samaan tapaan kuin suosikeissa ja watchlistissä.
+  useEffect(() => {
+    if (!user || !selectedGroupId) {
+      setGroupMovieIds([])
+      return
+    }
+
+    const token = localStorage.getItem('token')
+    axios.get(`${API_URL}/api/groups/${selectedGroupId}/movies`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then((res) => {
+        setGroupMovieIds(res.data.map((m) => m.movie_id))
+      })
+      .catch((err) => console.error('Failed to fetch group movies', err))
+  }, [user, selectedGroupId])
+
   const fullMovie = details ? { ...movie, ...details } : movie
 
   // Poimitaan vuosi julkaisupäivämäärästä
@@ -40,6 +82,32 @@ export default function MovieDetailView({
   const genresText = fullMovie.genres
     ? fullMovie.genres.map(g => g.name).join(' · ').toUpperCase()
     : ''
+
+  const isInSelectedGroup = groupMovieIds.includes(fullMovie.id)
+
+  const handleToggleGroupMovie = async () => {
+    if (!selectedGroupId) return
+    const token = localStorage.getItem('token')
+
+    try {
+      if (isInSelectedGroup) {
+        await axios.delete(
+          `${API_URL}/api/groups/${selectedGroupId}/movies/${fullMovie.id}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        )
+        setGroupMovieIds((prev) => prev.filter((id) => id !== fullMovie.id))
+      } else {
+        await axios.post(
+          `${API_URL}/api/groups/${selectedGroupId}/movies`,
+          { movieId: fullMovie.id },
+          { headers: { Authorization: `Bearer ${token}` } }
+        )
+        setGroupMovieIds((prev) => [...prev, fullMovie.id])
+      }
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failed to update group movies')
+    }
+  }
 
   return (
     <div className="movie-detail-container">
@@ -97,6 +165,25 @@ export default function MovieDetailView({
             {fullMovie.overview || 'No overview available for this movie.'}
           </p>
 
+          {/* Ryhmävalikko on omassa rivissään erillään toiminto-napeista,
+              jotta se ei sekoitu suosikki-/watchlist-/ryhmänappien joukkoon. */}
+          {user && myGroups.length > 0 && (
+            <div className="movie-group-picker">
+              <label htmlFor="group-select">Group</label>
+              <select
+                id="group-select"
+                value={selectedGroupId}
+                onChange={(e) => setSelectedGroupId(e.target.value)}
+              >
+                {myGroups.map((group) => (
+                  <option key={group.id} value={group.id}>
+                    {group.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           <div className="movie-action-buttons" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
             {user && (
               <>
@@ -121,6 +208,25 @@ export default function MovieDetailView({
                   </svg>
                   {isInWatchlist && isInWatchlist(fullMovie.id) ? 'Remove from watchlist' : 'Add to watchlist'}
                 </button>
+
+                {/* Lisää ryhmään -nappi. Käyttää samaa väritystä kuin muutkin
+                    toimintonapit (btn-action), jotta rivi näyttää yhtenäiseltä. */}
+                {myGroups.length > 0 ? (
+                  <button
+                    type="button"
+                    className={`btn-action ${isInSelectedGroup ? 'active' : ''}`}
+                    onClick={handleToggleGroupMovie}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="9" cy="7" r="4"></circle>
+                      <path d="M19 8v6M22 11h-6"></path>
+                    </svg>
+                    {isInSelectedGroup ? 'Remove from group' : 'Add to group'}
+                  </button>
+                ) : (
+                  <p className="no-groups-hint">Join a group to add this movie there.</p>
+                )}
               </>
             )}
           </div>
