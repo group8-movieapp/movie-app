@@ -10,7 +10,9 @@ import {
   deleteGroup,
   isGroupMember,
   addGroupMovie,
-  getGroupMovies
+  getGroupMovies,
+  removeGroupMovie,
+  getUserGroups
 } from '../models/groupModel.js'
 
 const postGroup = async (req, res, next) => {
@@ -32,6 +34,19 @@ const postGroup = async (req, res, next) => {
 const getGroups = async (req, res, next) => {
   try {
     const groups = await getAllGroups()
+    res.json(groups)
+  } catch (error) {
+    next(error)
+  }
+}
+
+// Hae vain käyttäjän omat ryhmät (joissa hän on hyväksytty jäsen).
+// Rekisteröity reitissä ennen /:id:tä, muuten "/mine" tulkittaisiin
+// elokuvan id:n tapaan ryhmän id:ksi.
+const getMyGroups = async (req, res, next) => {
+  try {
+    const userId = req.user.id
+    const groups = await getUserGroups(userId)
     res.json(groups)
   } catch (error) {
     next(error)
@@ -225,10 +240,49 @@ const addMovieToGroupController = async (req, res, next) => {
     next(error)
   }
 }
+const removeMovieFromGroupController = async (req, res, next) => {
+  try {
+    const groupId = req.params.id
+    const movieId = req.params.movieId
+    const userId = req.user.id
+
+    const group = await getGroupById(groupId)
+
+    if (!group) {
+      return res.status(404).json({ error: 'Group not found' })
+    }
+
+    const isMember = await isGroupMember(groupId, userId)
+
+    // Kuka tahansa ryhmän jäsen (tai omistaja) saa poistaa elokuvan,
+    // samaan tapaan kuin lisääminenkin on avoinna kaikille jäsenille.
+    if (!isMember && group.owner_id !== userId) {
+      return res.status(403).json({
+        error: 'Only group members can remove movies.'
+      })
+    }
+
+    const deletedMovie = await removeGroupMovie(groupId, movieId)
+
+    if (!deletedMovie) {
+      return res.status(404).json({
+        error: 'Movie not found in this group.'
+      })
+    }
+
+    res.json({
+      message: 'Movie removed from group successfully.'
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 
 export {
   postGroup,
   getGroups,
+  getMyGroups,
   getSingleGroup,
   removeGroup,
   getGroupMembers,
@@ -238,5 +292,7 @@ export {
   rejectJoinRequest,
   removeMember,
   getGroupMoviesController,
-  addMovieToGroupController
+  addMovieToGroupController,
+  removeMovieFromGroupController
+
 }

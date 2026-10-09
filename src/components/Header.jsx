@@ -1,4 +1,3 @@
-
 import '../styles/header.css';
 
 export default function Header({ page, setPage, user, onLogout, onDelete }) {
@@ -10,23 +9,39 @@ export default function Header({ page, setPage, user, onLogout, onDelete }) {
         </button>
 
         <nav className="site-nav">
-          {/* Näytetään Favorites-nappi vain, jos käyttäjä on kirjautunut */}
+          {/* Näytetään Favorites, Watchlist, Profile ja Groups vain, jos käyttäjä on kirjautunut */}
           {user && (
-            <button 
-              type="button" 
-              className={page === 'favorites' ? 'nav-link active' : 'nav-link'} 
-              onClick={() => setPage('favorites')}
-            >
-              Favorites
-            </button>
+            <>
+              <button 
+                type="button" 
+                className={page === 'favorites' ? 'nav-link active' : 'nav-link'} 
+                onClick={() => setPage('favorites')}
+              >
+                Favorites
+              </button>
+              <button 
+                type="button" 
+                className={page === 'watchlist' ? 'nav-link active' : 'nav-link'} 
+                onClick={() => setPage('watchlist')}
+              >
+                Watchlist
+              </button>
+              <button 
+                type="button" 
+                className={page === 'profile' ? 'nav-link active' : 'nav-link'} 
+                onClick={() => setPage('profile')}
+              >
+                Profile
+              </button>
+              <button 
+                type="button" 
+                className={page === 'groups' ? 'nav-link active' : 'nav-link'} 
+                onClick={() => setPage('groups')}
+              >
+                Groups
+              </button>
+            </>
           )}
-
-          <button type="button" className={page === 'profile' ? 'nav-link active' : 'nav-link'} onClick={() => setPage('profile')}>
-            Profile
-          </button>
-          <button type="button" className={page === 'groups' ? 'nav-link active' : 'nav-link'} onClick={() => setPage('groups')}>
-            Groups
-          </button>
         </nav>
 
         <div className="site-header-actions">

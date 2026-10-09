@@ -3,6 +3,7 @@ import express from 'express'
 import { 
   postGroup, 
   getGroups, 
+  getMyGroups,
   getSingleGroup, 
   removeGroup,
   joinGroup,
@@ -12,13 +13,16 @@ import {
   getGroupMembers,
   removeMember,
   getGroupMoviesController,
-  addMovieToGroupController
+  addMovieToGroupController,
+  removeMovieFromGroupController
 } from '../controllers/groupController.js'
 import { auth } from '../middleware/auth.js'
 
 const router = express.Router()
 
 router.get('/', getGroups)
+// Rekisteröity ennen '/:id':tä, muuten "mine" tulkittaisiin ryhmän id:ksi.
+router.get('/mine', auth, getMyGroups)
 router.post('/', auth, postGroup)
 router.get('/:id', auth, getSingleGroup)
 router.delete('/:id', auth, removeGroup)
@@ -36,5 +40,5 @@ router.delete('/:id/members/:userId', auth, removeMember)
 // Ryhmän elokuvat
 router.get('/:id/movies', auth, getGroupMoviesController)
 router.post('/:id/movies', auth, addMovieToGroupController)
-
+router.delete('/:id/movies/:movieId', auth, removeMovieFromGroupController)
 export default router

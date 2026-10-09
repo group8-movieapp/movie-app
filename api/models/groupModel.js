@@ -162,6 +162,31 @@ const getGroupMovies = async (groupId) => {
   return result.rows
 }
 
+const removeGroupMovie = async (groupId, movieId) => {
+  const result = await pool.query(
+    `DELETE FROM group_movies
+     WHERE group_id = $1 AND movie_id = $2
+     RETURNING *`,
+    [groupId, movieId]
+  )
+
+  return result.rows[0]
+}
+
+// 13. Hae ryhmät joissa käyttäjä on hyväksytty jäsen — käytetään
+// "lisää ryhmään" -valikkoon MovieDetailView.jsx:ssä.
+const getUserGroups = async (userId) => {
+  const result = await pool.query(
+    `SELECT g.id, g.name, g.owner_id
+     FROM groups g
+     JOIN group_members gm ON gm.group_id = g.id
+     WHERE gm.user_id = $1 AND gm.status = 'accepted'
+     ORDER BY g.name`,
+    [userId]
+  )
+  return result.rows
+}
+
 export {
   createGroup,
   getAllGroups,
@@ -174,5 +199,7 @@ export {
   removeGroupMember,
   deleteGroup,
   addGroupMovie,
-  getGroupMovies
+  getGroupMovies,
+  removeGroupMovie,
+  getUserGroups
 }

@@ -7,11 +7,13 @@ import Register from './components/Register'
 import MovieSearch from './components/MovieSearch'
 import Header from './components/Header'
 import FavoritesList from './components/FavoritesList'
+import WatchlistView from './components/WatchlistView' // <-- Tuo watchlist-näkymä
 import MovieDetailView from './components/MovieDetailView'
 import GroupsView from './components/GroupsView'
 import GroupDetailView from './components/GroupDetailView'
 import Profile from './components/Profile'
 import { useFavorites } from './hooks/useFavorites'
+import { useWatchlist } from './hooks/useWatchlist' 
 import { useNavigation } from './hooks/useNavigation'
 import AppRouter from './AppRouter'
 
@@ -21,7 +23,6 @@ function AppContent() {
   const [user, setUser] = useState(null)
   const navigate = useNavigate()
 
-  // Navigaatio-hook omistaa page- ja selectedMovie-tilan
   const {
     page,
     setPage,
@@ -40,6 +41,15 @@ function AppContent() {
     handleDeleteFavorite
   } = useFavorites(user, setPage, setSelectedMovie)
 
+  
+  const {
+    watchlist,
+    setWatchlist,
+    isInWatchlist,
+    handleToggleWatchlist,
+    handleDeleteFromWatchlist
+  } = useWatchlist(user, setPage, setSelectedMovie)
+
   useEffect(() => {
     const loggedUserJSON = localStorage.getItem('user')
     if (loggedUserJSON) {
@@ -47,7 +57,6 @@ function AppContent() {
     }
   }, [])
 
-  // Vie käyttäjä takaisin osoitteeseen "/" (esim. /shared-sivulta) ja vaihda sivu
   const handleHeaderNavigate = (nextPage) => {
     handleNavigate(nextPage)
     navigate('/')
@@ -58,6 +67,7 @@ function AppContent() {
     localStorage.removeItem('user')
     setUser(null)
     setFavorites([])
+    setWatchlist([]) 
     handleHeaderNavigate('home')
   }
 
@@ -95,6 +105,8 @@ function AppContent() {
           user={user}
           isFavorite={isFavorite}
           onToggleFavorite={handleToggleFavorite}
+          isInWatchlist={isInWatchlist}         
+          onToggleWatchlist={handleToggleWatchlist} 
         />
       )
     }
@@ -118,6 +130,17 @@ function AppContent() {
         <FavoritesList
           favorites={favorites}
           onDeleteFavorite={handleDeleteFavorite}
+          onSelectMovie={setSelectedMovie}
+        />
+      )
+    }
+
+    
+    if (page === 'watchlist') {
+      return (
+        <WatchlistView
+          watchlist={watchlist}
+          onRemoveWatchlist={handleDeleteFromWatchlist}
           onSelectMovie={setSelectedMovie}
         />
       )
