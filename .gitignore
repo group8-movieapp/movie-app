@@ -13,6 +13,9 @@ dist-ssr
 *.local
 .env
 
+# Vitest reports and artifacts
+.vitest/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
