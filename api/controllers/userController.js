@@ -140,7 +140,15 @@ const deleteUser = async (req, res, next) => {
   }
 }
 
-export { registerUser, loginUser, deleteUser } // Viedään registerUser-funktio, jotta sitä voidaan käyttää muissa tiedostoissa
+const logoutUser = async (req, res, next) => {
+  try {
+    return res.status(200).json({ message: 'Logged out succesfully' })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export { registerUser, loginUser, deleteUser, logoutUser } // Viedään registerUser-funktio, jotta sitä voidaan käyttää muissa tiedostoissa
 
 
 //Toimii välikätenä HTTP-pynnön ja tietokannan välillä. Se ottaa vastaan HTTP-pyynnön,
