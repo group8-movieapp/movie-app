@@ -5,6 +5,7 @@ import { pool } from "../models/db.js"
 import { initializeTestDb } from "../helper/test.js"
 
 describe('Auth API', () => {
+    let token = ''
 
     const testUser = {
         username: 'TestUser',
@@ -64,6 +65,7 @@ describe('Auth API', () => {
 
             expect(res.status).toBe(200)
             expect(res.body).toHaveProperty('token')
+            token = res.body.token
         })
 
         test('should fail with invalid password (401)', async () => {
@@ -77,5 +79,44 @@ describe('Auth API', () => {
             expect(res.status).toBe(401)
         })
 
+    })
+
+    // Log out tests
+    describe('POST /api/users/logout', () => {
+        test('should log out succesfully with token (200) ', async () => {
+            const res = await request(app)
+                .post('/api/users/logout')
+                .set('Authorization', `Bearer ${token}`)
+
+            expect(res.status).toBe(200)
+            expect(res.body).toHaveProperty('message')
+        })
+
+        test('should fail to log out without token (401)', async () => {
+            const res = await request(app)
+                .post('/api/users/logout')
+
+            expect(res.status).toBe(401)
+        })
+
+    })
+
+    // Delete user tests
+    describe('DELETE /api/users', () => {
+        test('should fail to delete user without token (401)', async () => {
+            const res = await request(app)
+                .delete('/api/users')
+
+            expect(res.status).toBe(401)
+        })
+
+        test('should delete user succesfully with token (200)', async () => {
+            const res = await request(app)
+                .delete('/api/users')
+                .set('Authorization', `Bearer ${token}`)
+
+            expect(res.status).toBe(200)
+            expect(res.body).toHaveProperty('message')
+        })
     })
 })

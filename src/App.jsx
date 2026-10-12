@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import {Routes, Route, Navigate, useNavigate, useLocation, useParams} from 'react-router-dom'
+import { Routes, Route, Navigate, useNavigate, useLocation, useParams } from 'react-router-dom'
 import './App.css'
 import NowPlayingMovies from './components/NowPlayingmovies'
 import Login from './components/Login'
@@ -14,7 +14,7 @@ import GroupDetailView from './components/GroupDetailView'
 import Profile from './components/Profile'
 import SharedFavorites from './components/SharedFavorites'
 import { useFavorites } from './hooks/useFavorites'
-import { useWatchlist } from './hooks/useWatchlist' 
+import { useWatchlist } from './hooks/useWatchlist'
 
 
 const API_URL = import.meta.env.VITE_API_URL
@@ -23,7 +23,7 @@ const API_URL = import.meta.env.VITE_API_URL
 function RequireAuth({ user, children }) {
   return user ? children : <Navigate to="/login" replace />
 }
- 
+
 // Reads :groupId from the URL and passes it down
 function GroupDetailRoute({ user, onBack }) {
   const { groupId } = useParams()
@@ -42,14 +42,14 @@ export default function App() {
     }
   })
   const [selectedMovie, setSelectedMovie] = useState(null)
- 
+
   const navigate = useNavigate()
   const { pathname } = useLocation()
- 
+
   const page = pathname.split('/')[1] || 'home'
- 
+
   const goTo = (target) => navigate(target === 'home' ? '/' : `/${target}`)
- 
+
   const {
     favorites,
     setFavorites,
@@ -57,7 +57,7 @@ export default function App() {
     handleToggleFavorite,
     handleDeleteFavorite
   } = useFavorites(user, goTo, setSelectedMovie)
- 
+
   const {
     watchlist,
     setWatchlist,
@@ -65,24 +65,39 @@ export default function App() {
     handleToggleWatchlist,
     handleDeleteFromWatchlist
   } = useWatchlist(user, goTo, setSelectedMovie)
- 
+
   const handleSelectMovie = (movie) => {
     setSelectedMovie(movie)
     navigate(`/movies/${movie.id}`)
   }
- 
-  const handleLogout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
-    setUser(null)
-    setFavorites([])
-    setWatchlist([])
-    navigate('/')
+
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem('token')
+      if (token) {
+        await fetch(`${API_URL}/api/users/logout`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        })
+      }
+    } catch (error) {
+      console.error('Logout error:', error)
+    } finally {
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+      setUser(null)
+      setFavorites([])
+      setWatchlist([])
+      navigate('/')
+    }
   }
- 
+
   const handleDelete = async () => {
     if (!window.confirm('Are you sure you want to delete your account?')) return
- 
+
     try {
       const token = localStorage.getItem('token')
       const response = await fetch(`${API_URL}/api/users`, {
@@ -92,19 +107,19 @@ export default function App() {
           'Content-Type': 'application/json'
         }
       })
- 
+
       if (!response.ok) {
         const data = await response.json()
         throw new Error(data.error || 'Delete account failed')
       }
- 
+
       alert('Account deleted successfully')
       handleLogout()
     } catch (error) {
       alert(`Error: ${error.message}`)
     }
   }
- 
+
   return (
     <div className="app">
       <Header
@@ -125,10 +140,10 @@ export default function App() {
               </>
             }
           />
- 
+
           <Route path="/login" element={<Login setPage={goTo} setUser={setUser} />} />
           <Route path="/register" element={<Register setPage={goTo} />} />
- 
+
           <Route
             path="/movies/:movieId"
             element={
@@ -147,7 +162,7 @@ export default function App() {
               )
             }
           />
- 
+
           <Route
             path="/favorites"
             element={
@@ -160,7 +175,7 @@ export default function App() {
               </RequireAuth>
             }
           />
- 
+
           <Route
             path="/watchlist"
             element={
@@ -173,7 +188,7 @@ export default function App() {
               </RequireAuth>
             }
           />
- 
+
           <Route
             path="/groups"
             element={
@@ -185,7 +200,7 @@ export default function App() {
               </RequireAuth>
             }
           />
- 
+
           <Route
             path="/groups/:groupId"
             element={
@@ -194,7 +209,7 @@ export default function App() {
               </RequireAuth>
             }
           />
- 
+
           <Route
             path="/profile"
             element={
@@ -205,7 +220,7 @@ export default function App() {
           />
 
           <Route path="/shared" element={<SharedFavorites />} />
- 
+
           {/* Unknown URLs go home */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

@@ -1,0 +1,2 @@
+# Pakotetaan kaikki .sh-tiedostot pysymään LF-muodossa käyttöjärjestelmästä riippumatta
+*.sh text eol=lf
