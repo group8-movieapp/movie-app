@@ -1,18 +1,42 @@
 .favorites-section {
-  padding: 20px;
+  padding: 40px 20px;
+  max-width: 1200px; 
+  margin: 0 auto;    
+}
+
+.favorites-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .favorites-section h2 {
-  margin-bottom: 1rem;
-  color: var(--text);
+  margin-bottom: 0;
+  color: var(--text, #111);
+}
+
+
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  justify-content: center;
 }
 
 .favorite-card {
   display: flex;
   flex-direction: column;
+  align-items: center; 
   gap: 0.6rem;
 }
 
 .favorite-remove-btn {
   width: 100%;
+  max-width: 220px; 
+  margin: 0 auto;   
+  display: block;
+  text-align: center;
 }
