@@ -27,6 +27,16 @@ PostgreSQL :5432
 
 ---
 
+## Database Schema
+
+The application uses PostgreSQL with the following schema (see `api/init.sql`). Movie data itself (titles, posters, genres, etc.) is not stored locally — `movie_id` fields are TMDB movie IDs fetched live from the TMDB API.
+
+![Database schema](docs/database-schema.png)
+
+All foreign keys use `ON DELETE CASCADE`, so deleting a user or group automatically cleans up their related favorites, reviews, memberships and movies. `group_movies` and `group_members` each have a unique/composite key preventing duplicate entries (same movie added twice to a group, or same user joining a group twice).
+
+---
+
 ## Prerequisites
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
