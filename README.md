@@ -117,7 +117,8 @@ To stop containers and reset database volumes completely:
 ```bash
 docker compose down -v
 ```
-## UI Design 
+
+## UI Design
 
 ![UI Design 1](./pic/UI1.png)
 ![UI Design 2](./pic/UI2.png)
@@ -129,6 +130,7 @@ docker compose down -v
 The backend provides the following REST API endpoints:
 
 ### 1. Users & Authentication
+
 | Method | Endpoint | Description | Authentication Required |
 | :--- | :--- | :--- | :--- |
 | `POST` | `/api/users/signup` | Register a new user | No |
@@ -137,6 +139,7 @@ The backend provides the following REST API endpoints:
 | `DELETE` | `/api/users` | Delete user account | Yes |
 
 ### 2. Movies (TMDB Integration)
+
 | Method | Endpoint | Description | Authentication Required |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/api/movies/search` | Search for movies by keyword | No |
@@ -145,6 +148,7 @@ The backend provides the following REST API endpoints:
 | `GET` | `/api/movies/:id` | Get detailed information for a single movie | No |
 
 ### 3. Favorites
+
 | Method | Endpoint | Description | Authentication Required |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/api/favorites` | Get authenticated user's favorite movies | Yes |
@@ -152,6 +156,7 @@ The backend provides the following REST API endpoints:
 | `DELETE` | `/api/favorites/:movieId` | Remove a movie from favorites | Yes |
 
 ### 4. Watchlist
+
 | Method | Endpoint | Description | Authentication Required |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/api/watchlist` | Get authenticated user's watchlist | Yes |
@@ -159,6 +164,7 @@ The backend provides the following REST API endpoints:
 | `DELETE` | `/api/watchlist/:movieId` | Remove a movie from the watchlist | Yes |
 
 ### 5. Reviews
+
 | Method | Endpoint | Description | Authentication Required |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/api/reviews` | Get all reviews | No |
@@ -167,6 +173,7 @@ The backend provides the following REST API endpoints:
 | `DELETE` | `/api/reviews/:id` | Delete a review by ID | Yes |
 
 ### 6. Groups
+
 | Method | Endpoint | Description | Authentication Required |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/api/groups` | Get all groups | No |
@@ -185,5 +192,3 @@ The backend provides the following REST API endpoints:
 | `GET` | `/api/groups/:id/movies` | Get movies added to the group | Yes |
 | `POST` | `/api/groups/:id/movies` | Add a movie to the group list | Yes |
 | `DELETE` | `/api/groups/:id/movies/:movieId` | Remove a movie from the group list | Yes |
-
-
